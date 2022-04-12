@@ -1,7 +1,7 @@
 {
   "name": "forta-access-control-role-changes-bot",
   "version": "0.0.1",
-  "description": "Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted",
+  "description": "Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted from the Access Control contract",
   "chainIds": [
     137
   ],

@@ -2,7 +2,7 @@
 
 ## Description
 
-Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
+Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted from the Access Control contract
 
 ## Supported Chains
 
