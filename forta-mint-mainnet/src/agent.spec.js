@@ -6,7 +6,7 @@ const {
   ethers,
 } = require("forta-agent");
 const { handleTransaction } = require("./agent");
-const { events, contractAddresses } = require("./agent.config.json");
+const { event, contractAddress } = require("./agent.config.json");
 describe("FORTA MINT BOT", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
@@ -24,8 +24,8 @@ describe("FORTA MINT BOT", () => {
       expect(findings).toStrictEqual([]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
       expect(mockTxEvent.filterLog).toHaveBeenCalledWith(
-        events[0],
-        contractAddresses[0]
+        event,
+        contractAddress
       );
     });
 
@@ -47,7 +47,7 @@ describe("FORTA MINT BOT", () => {
         Finding.fromObject({
           name: "Forta MainNet Mint",
           description: `Forta tokens minted amount: ${mintValue}`,
-          alertId: "FORTA-1",
+          alertId: "FORTA-MINT-MAINNET",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {
@@ -58,8 +58,8 @@ describe("FORTA MINT BOT", () => {
       ]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
       expect(mockTxEvent.filterLog).toHaveBeenCalledWith(
-        events[0],
-        contractAddresses[0]
+        event,
+        contractAddress
       );
     });
   });

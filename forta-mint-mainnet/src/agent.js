@@ -4,13 +4,13 @@ const {
   FindingType,
   ethers,
 } = require("forta-agent");
-const { events, contractAddresses } = require("./agent.config.json");
+const { event, contractAddress } = require("./agent.config.json");
 const ADDRESS_ZERO = ethers.constants.AddressZero;
 function provideHandleTransaction() {
   return async function handleTransaction(txEvent) {
     const findings = [];
 
-    const filteredTxEvent = txEvent.filterLog(events[0], contractAddresses[0]);
+    const filteredTxEvent = txEvent.filterLog(event, contractAddress);
 
     filteredTxEvent.forEach((tx) => {
       if (tx.args.from === ADDRESS_ZERO) {
@@ -20,7 +20,7 @@ function provideHandleTransaction() {
           Finding.fromObject({
             name: "Forta MainNet Mint",
             description: `Forta tokens minted amount: ${valueMinted}`,
-            alertId: "FORTA-1",
+            alertId: "FORTA-MINT-MAINNET",
             severity: FindingSeverity.Low,
             type: FindingType.Info,
             metadata: {

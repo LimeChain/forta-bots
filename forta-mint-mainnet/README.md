@@ -10,7 +10,7 @@ This agent detects mints for the FORTA token on Ethereum Mainnet
 
 ## Alerts
 
-- FORTA-1
+- FORTA-MINT-MAINNET
   - Fired when a MINT transaction happens
   - Severity is always set to "low"
   - Type is always set to "info"
