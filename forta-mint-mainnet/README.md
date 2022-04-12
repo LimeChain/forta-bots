@@ -1,8 +1,8 @@
-# Large Tether Transfer Agent
+# FORTA Mint Mainnet
 
 ## Description
 
-This agent detects mints for the FORTA token on ethereum Main net
+This agent detects mints for the FORTA token on Ethereum Mainnet
 
 ## Supported Chains
 
