@@ -5,14 +5,9 @@ const {
   createTransactionEvent,
   ethers,
 } = require("forta-agent");
-const {
-  handleTransaction,
-  ERC20_TRANSFER_EVENT,
-  TETHER_ADDRESS,
-  TETHER_DECIMALS,
-} = require("./agent");
-
-describe("high tether transfer agent", () => {
+const { handleTransaction } = require("./agent");
+const { events, contractAddresses } = require("./agent.config.json");
+describe("FORTA MINT BOT", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
@@ -21,7 +16,7 @@ describe("high tether transfer agent", () => {
       mockTxEvent.filterLog.mockReset();
     });
 
-    it("returns empty findings if there are no Tether transfers", async () => {
+    it("returns empty findings if there are no MINT transactions", async () => {
       mockTxEvent.filterLog.mockReturnValue([]);
 
       const findings = await handleTransaction(mockTxEvent);
@@ -29,43 +24,42 @@ describe("high tether transfer agent", () => {
       expect(findings).toStrictEqual([]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
       expect(mockTxEvent.filterLog).toHaveBeenCalledWith(
-        ERC20_TRANSFER_EVENT,
-        TETHER_ADDRESS
+        events[0],
+        contractAddresses[0]
       );
     });
 
-    it("returns a finding if there is a Tether transfer over 10,000", async () => {
-      const mockTetherTransferEvent = {
+    it("returns a finding if there is a MINT transfer", async () => {
+      const mockMintTxEvent = {
         args: {
-          from: "0xabc",
+          from: ethers.constants.AddressZero,
           to: "0xdef",
           value: ethers.BigNumber.from("20000000000"), //20k with 6 decimals
         },
       };
-      mockTxEvent.filterLog.mockReturnValue([mockTetherTransferEvent]);
+      mockTxEvent.filterLog.mockReturnValue([mockMintTxEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
-      const normalizedValue = mockTetherTransferEvent.args.value.div(
-        10 ** TETHER_DECIMALS
-      );
+      const mintValue = ethers.utils.formatEther(mockMintTxEvent.args.value);
+
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "High Tether Transfer",
-          description: `High amount of USDT transferred: ${normalizedValue}`,
+          name: "Forta MainNet Mint",
+          description: `Forta tokens minted amount: ${mintValue}`,
           alertId: "FORTA-1",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {
-            to: mockTetherTransferEvent.args.to,
-            from: mockTetherTransferEvent.args.from,
+            to: mockMintTxEvent.args.to,
+            value: mintValue,
           },
         }),
       ]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
       expect(mockTxEvent.filterLog).toHaveBeenCalledWith(
-        ERC20_TRANSFER_EVENT,
-        TETHER_ADDRESS
+        events[0],
+        contractAddresses[0]
       );
     });
   });
