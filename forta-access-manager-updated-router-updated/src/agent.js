@@ -1,22 +1,17 @@
 const { Finding, FindingSeverity, FindingType } = require("forta-agent");
+const { abi, contracts } = require("./agent.config.json");
 
-const ERC20_TRANSFER_EVENT =
-  "event Transfer(address indexed from, address indexed to, uint256 value)";
-const TETHER_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
-const TETHER_DECIMALS = 6;
-let findingsCount = 0;
+let contractNames;
+let contractAddresses;
+
+function initialize() {
+  const contractNames = Object.keys(contracts);
+  const contractAddresses = contracts.map((i) => i.address);
+  console.log(contractNames, contractAddresses);
+}
 
 const handleTransaction = async (txEvent) => {
   const findings = [];
-
-  // limiting this agent to emit only 5 findings so that the alert feed is not spammed
-  if (findingsCount >= 5) return findings;
-
-  // filter the transaction logs for Tether transfer events
-  const tetherTransferEvents = txEvent.filterLog(
-    ERC20_TRANSFER_EVENT,
-    TETHER_ADDRESS
-  );
 
   tetherTransferEvents.forEach((transferEvent) => {
     // extract transfer event arguments
@@ -39,23 +34,13 @@ const handleTransaction = async (txEvent) => {
           },
         })
       );
-      findingsCount++;
     }
   });
 
   return findings;
 };
 
-// const handleBlock = async (blockEvent) => {
-//   const findings = [];
-//   // detect some block condition
-//   return findings;
-// };
-
 module.exports = {
+  initialize,
   handleTransaction,
-  // handleBlock,
-  ERC20_TRANSFER_EVENT, // exported for unit tests
-  TETHER_ADDRESS, // exported for unit tests
-  TETHER_DECIMALS, // exported for unit tests
 };
