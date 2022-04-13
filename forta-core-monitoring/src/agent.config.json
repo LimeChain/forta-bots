@@ -1,0 +1,9 @@
+{
+  "abi": [
+    "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
+    "event StakeThresholdChanged(uint256 min, uint256 max, bool activated)"
+  ],
+  "contracts": {
+    "0x61447385B019187daa48e91c55c02AF1F1f3F863": "Agent Registry"
+  }
+}
