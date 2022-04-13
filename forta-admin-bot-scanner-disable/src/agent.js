@@ -32,7 +32,7 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
     txFiltered.forEach((tx) => {
       const { permission, value, scannerId, agentId } = tx.args;
       const { address } = tx;
-      console.log(value);
+
       const contractAddressesFlattened = contractAddresses.map((e) =>
         e.toLowerCase()
       );
