@@ -2,7 +2,7 @@
 
 ## Description
 
-This agent detects when the FORTA Scanner node verion has been updated
+This agent detects when the FORTA Scanner node version has been updated
 
 ## Supported Chains
 
