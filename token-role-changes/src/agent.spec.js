@@ -45,7 +45,7 @@ const roleGrantedWithUnknownRoleEvent = {
 const mockProvider = { getNetwork: jest.fn() };
 const mockGetEthersProvider = () => mockProvider;
 
-describe('access control role changes bot', () => {
+describe('forta token role changes bot', () => {
   describe('initialize', () => {
     it('should set the contract address to the Ethereum token address if the chainId is 1', async () => {
       mockProvider.getNetwork.mockResolvedValueOnce({ chainId: 1 });
