@@ -19,6 +19,7 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
     - role - the role that was granted
     - account - the account that the role was granted to
     - sender - the account that originated the contract call
+    - network - the network that the bot is monitoring (Either "Ethereum" or "Polygon")
 
 - FORTA-TOKEN-ROLE-REVOKED
   - Fired when a 'RoleRevoked' event is emitted
@@ -28,6 +29,7 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
     - role - the role that was granted
     - account - the account that the role was granted to
     - sender - the account that originated the contract call
+    - network - the network that the bot is monitoring (Either "Ethereum" or "Polygon")
 
 - FORTA-TOKEN-ROLE-ADMIN-CHANGED
   - Fired when a 'RoleAdminChanged' event is emitted
@@ -37,6 +39,7 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
     - role - the role that was granted
     - previousAdminRole - the previous admin role
     - newAdminRole - the new admin role
+    - network - the network that the bot is monitoring (Either "Ethereum" or "Polygon")
 
 ## Test Data
 
