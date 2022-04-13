@@ -31,14 +31,14 @@ describe("Forta AccessManagerUpdated and Forta Router updated ", () => {
     });
 
     it("returns a finding if there is a Router Updated event emitted", async () => {
-      const mockTetherTransferEvent = {
+      const mockRouterUpdatedEvent = {
         name: "Forta Router Updated",
         address: "0x123",
         args: {
           router: "0x0",
         },
       };
-      mockTxEvent.filterLog.mockReturnValue([mockTetherTransferEvent]);
+      mockTxEvent.filterLog.mockReturnValue([mockRouterUpdatedEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
@@ -59,14 +59,14 @@ describe("Forta AccessManagerUpdated and Forta Router updated ", () => {
     });
 
     it("returns a finding if there is a Access Manager Updated event emitted", async () => {
-      const mockTetherTransferEvent = {
+      const mockAccessManagerUpdatedEvent = {
         name: "Forta Access Manager Updated",
         address: "0x123",
         args: {
           newAddressManager: "0x0",
         },
       };
-      mockTxEvent.filterLog.mockReturnValue([mockTetherTransferEvent]);
+      mockTxEvent.filterLog.mockReturnValue([mockAccessManagerUpdatedEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
