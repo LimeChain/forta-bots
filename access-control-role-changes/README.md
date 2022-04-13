@@ -10,8 +10,6 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
 
 ## Alerts
 
-Describe each of the type of alerts fired by this agent
-
 - FORTA-ACCESS-CONTROL-ROLE-GRANTED
   - Fired when a 'RoleGranted' event is emitted
   - Severity is always set to "medium"
