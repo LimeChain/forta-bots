@@ -9,21 +9,19 @@ const handleTransaction = async (txEvent) => {
   txFiltered.forEach((tx) => {
     const { oldVersion, newVersion } = tx.args;
 
-    if (oldVersion !== newVersion) {
-      findings.push(
-        Finding.fromObject({
-          name: "Scanner Node Version Updated",
-          description: `Scanner Node Version has been updated on Polygon Mainnet`,
-          alertId: "FORTA-SCANNER-NODE-UPDATED",
-          severity: FindingSeverity.Low,
-          type: FindingType.Info,
-          metadata: {
-            oldVersion,
-            newVersion,
-          },
-        })
-      );
-    }
+    findings.push(
+      Finding.fromObject({
+        name: "Scanner Node Version Updated",
+        description: `Scanner Node Version has been updated on Polygon Mainnet`,
+        alertId: "FORTA-SCANNER-NODE-UPDATED",
+        severity: FindingSeverity.Low,
+        type: FindingType.Info,
+        metadata: {
+          oldVersion,
+          newVersion,
+        },
+      })
+    );
   });
 
   return findings;
