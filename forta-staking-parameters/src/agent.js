@@ -9,21 +9,34 @@ const handleTransaction = async (txEvent) => {
 
   txFiltered.forEach((tx) => {
     const { oldHandler, newHandler, staking } = tx.args;
-
-    findings.push(
-      Finding.fromObject({
-        name: "Forta Staking Parameters emitted",
-        description: `Forta Staking Parameters emitted: ${tx.name} `,
-        alertId: `FORTA-STAKING-PARAMETERS-${tx.name.toUpperCase()}`,
-        severity: FindingSeverity.Low,
-        type: FindingType.Info,
-        metadata: {
-          oldHandler,
-          newHandler,
-          staking,
-        },
-      })
-    );
+    if (oldHandler) {
+      findings.push(
+        Finding.fromObject({
+          name: "Forta Staking Parameters emitted",
+          description: `Forta Staking Parameters emitted: ${tx.name} `,
+          alertId: `FORTA-STAKING-PARAMETERS-${tx.name.toUpperCase()}`,
+          severity: FindingSeverity.Low,
+          type: FindingType.Info,
+          metadata: {
+            oldHandler,
+            newHandler,
+          },
+        })
+      );
+    } else if (staking) {
+      findings.push(
+        Finding.fromObject({
+          name: "Forta Staking Parameters emitted",
+          description: `Forta Staking Parameters emitted: ${tx.name} `,
+          alertId: `FORTA-STAKING-PARAMETERS-${tx.name.toUpperCase()}`,
+          severity: FindingSeverity.Low,
+          type: FindingType.Info,
+          metadata: {
+            staking,
+          },
+        })
+      );
+    }
   });
 
   return findings;

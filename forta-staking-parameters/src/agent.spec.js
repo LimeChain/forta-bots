@@ -45,8 +45,6 @@ describe("Forta Staking Parameters emitted", () => {
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {
-            newHandler: undefined,
-            oldHandler: undefined,
             staking: mockTxEventProps.staking,
           },
         }),
@@ -77,7 +75,6 @@ describe("Forta Staking Parameters emitted", () => {
           metadata: {
             newHandler: mockTxEventProps.newHandler,
             oldHandler: mockTxEventProps.oldHandler,
-            staking: undefined,
           },
         }),
       ]);
