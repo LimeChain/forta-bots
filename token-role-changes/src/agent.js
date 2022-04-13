@@ -1,7 +1,7 @@
 const { getEthersProvider } = require('forta-agent');
 const {
   EVENT_SIGNATURES,
-  getAddressByChainId,
+  getAddressAndNetworkByChainId,
   createRoleGrantedAlert,
   createRoleRevokedAlert,
   createAdminRoleChangedAlert,
@@ -9,10 +9,11 @@ const {
 
 // Set the FORT contract address based on the chainId
 let contractAddress;
+let network;
 function provideInitialize(getProvider) {
   return async function initialize() {
     const { chainId } = await getProvider().getNetwork();
-    contractAddress = getAddressByChainId(chainId);
+    ({ contractAddress, network } = getAddressAndNetworkByChainId(chainId));
   };
 }
 
@@ -31,6 +32,7 @@ const handleTransaction = async (txEvent) => {
           role,
           account,
           sender,
+          network,
         ));
         break;
       }
@@ -40,6 +42,7 @@ const handleTransaction = async (txEvent) => {
           role,
           account,
           sender,
+          network,
         ));
         break;
       }
@@ -49,6 +52,7 @@ const handleTransaction = async (txEvent) => {
           role,
           previousAdminRole,
           newAdminRole,
+          network,
         ));
         break;
       }
@@ -64,4 +68,5 @@ module.exports = {
   provideInitialize,
   handleTransaction,
   getContractAddress: () => contractAddress, // exported for unit tests
+  getNetwork: () => network, // exported for unit tests
 };

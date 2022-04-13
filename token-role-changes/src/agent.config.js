@@ -23,20 +23,20 @@ module.exports = {
     'event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)',
   ],
   getRoleName,
-  getAddressByChainId: (chainId) => {
+  getAddressAndNetworkByChainId: (chainId) => {
     switch (chainId) {
       case 1:
-        return ETHEREUM_CONTRACT_ADDRESS;
+        return { contractAddress: ETHEREUM_CONTRACT_ADDRESS, network: 'Ethereum' };
       case 137:
-        return POLYGON_CONTRACT_ADDRESS;
+        return { contractAddress: POLYGON_CONTRACT_ADDRESS, network: 'Polygon' };
       default:
         throw new Error(`Unsupported chainId (${chainId}). The bot supports Ethereum (1) and Polygon (137)`);
     }
   },
-  createRoleGrantedAlert(role, account, sender) {
+  createRoleGrantedAlert(role, account, sender, network) {
     return Finding.fromObject({
       name: 'Role Granted',
-      description: `Role ${getRoleName(role)} granted for ${account}`,
+      description: `Role ${getRoleName(role)} granted for ${account} on the ${network} blockchain`,
       alertId: 'FORTA-TOKEN-ROLE-GRANTED',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
@@ -45,13 +45,14 @@ module.exports = {
         role,
         account,
         sender,
+        network,
       },
     });
   },
-  createRoleRevokedAlert(role, account, sender) {
+  createRoleRevokedAlert(role, account, sender, network) {
     return Finding.fromObject({
       name: 'Role Revoked',
-      description: `Role ${getRoleName(role)} revoked for ${account}`,
+      description: `Role ${getRoleName(role)} revoked for ${account} on the ${network} blockchain`,
       alertId: 'FORTA-TOKEN-ROLE-REVOKED',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
@@ -60,13 +61,14 @@ module.exports = {
         role,
         account,
         sender,
+        network,
       },
     });
   },
-  createAdminRoleChangedAlert(role, previousAdminRole, newAdminRole) {
+  createAdminRoleChangedAlert(role, previousAdminRole, newAdminRole, network) {
     return Finding.fromObject({
       name: 'Role Admin Changed',
-      description: `${getRoleName(role)}'s admin role changed from ${getRoleName(previousAdminRole)} to ${getRoleName(newAdminRole)}`,
+      description: `${getRoleName(role)}'s admin role changed from ${getRoleName(previousAdminRole)} to ${getRoleName(newAdminRole)} on the ${network} blockchain`,
       alertId: 'FORTA-TOKEN-ROLE-ADMIN-CHANGED',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
@@ -75,6 +77,7 @@ module.exports = {
         role,
         previousAdminRole,
         newAdminRole,
+        network,
       },
     });
   },

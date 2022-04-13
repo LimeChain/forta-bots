@@ -3,7 +3,12 @@ const {
   FindingSeverity,
   Finding,
 } = require('forta-agent');
-const { handleTransaction, provideInitialize, getContractAddress } = require('./agent');
+const {
+  handleTransaction,
+  provideInitialize,
+  getContractAddress,
+  getNetwork,
+} = require('./agent');
 const { getRoleName, ETHEREUM_CONTRACT_ADDRESS, POLYGON_CONTRACT_ADDRESS } = require('./agent.config');
 
 // ADMIN_ROLE
@@ -37,15 +42,11 @@ const roleGrantedWithUnknownRoleEvent = {
   args: { role: unknownRole, account, sender },
 };
 
+const mockProvider = { getNetwork: jest.fn() };
+const mockGetEthersProvider = () => mockProvider;
+
 describe('access control role changes bot', () => {
   describe('initialize', () => {
-    const mockProvider = { getNetwork: jest.fn() };
-    const mockGetEthersProvider = () => mockProvider;
-
-    beforeEach(() => {
-      mockProvider.getNetwork.mockReset();
-    });
-
     it('should set the contract address to the Ethereum token address if the chainId is 1', async () => {
       mockProvider.getNetwork.mockResolvedValueOnce({ chainId: 1 });
 
@@ -82,26 +83,31 @@ describe('access control role changes bot', () => {
       filterLog: jest.fn(),
     };
 
-    beforeEach(() => {
-      mockTxEvent.filterLog.mockReset();
+    // Call initialize to set the network
+    let network;
+    beforeAll(async () => {
+      mockProvider.getNetwork.mockResolvedValueOnce({ chainId: 1 });
+      const initialize = provideInitialize(mockGetEthersProvider);
+      await initialize();
+      network = getNetwork();
     });
 
     it('returns empty findings if there are no role changes', async () => {
-      mockTxEvent.filterLog.mockReturnValue([]);
+      mockTxEvent.filterLog.mockReturnValueOnce([]);
 
       const findings = await handleTransaction(mockTxEvent);
       expect(findings).toStrictEqual([]);
     });
 
     it('returns a finding if there is a RoleGranted event', async () => {
-      mockTxEvent.filterLog.mockReturnValue([roleGrantedEvent]);
+      mockTxEvent.filterLog.mockReturnValueOnce([roleGrantedEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: 'Role Granted',
-          description: `Role ${getRoleName(role)} granted for ${account}`,
+          description: `Role ${getRoleName(role)} granted for ${account} on the ${network} blockchain`,
           alertId: 'FORTA-TOKEN-ROLE-GRANTED',
           protocol: 'forta',
           severity: FindingSeverity.Medium,
@@ -110,20 +116,21 @@ describe('access control role changes bot', () => {
             role,
             account,
             sender,
+            network,
           },
         }),
       ]);
     });
 
     it('returns a finding if there is a RoleRevoked event', async () => {
-      mockTxEvent.filterLog.mockReturnValue([roleRevokedEvent]);
+      mockTxEvent.filterLog.mockReturnValueOnce([roleRevokedEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: 'Role Revoked',
-          description: `Role ${getRoleName(role)} revoked for ${account}`,
+          description: `Role ${getRoleName(role)} revoked for ${account} on the ${network} blockchain`,
           alertId: 'FORTA-TOKEN-ROLE-REVOKED',
           protocol: 'forta',
           severity: FindingSeverity.Medium,
@@ -132,20 +139,21 @@ describe('access control role changes bot', () => {
             role,
             account,
             sender,
+            network,
           },
         }),
       ]);
     });
 
     it('returns a finding if there is a RoleAdminChanged event', async () => {
-      mockTxEvent.filterLog.mockReturnValue([roleAdminChanged]);
+      mockTxEvent.filterLog.mockReturnValueOnce([roleAdminChanged]);
 
       const findings = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: 'Role Admin Changed',
-          description: `${getRoleName(role)}'s admin role changed from ${getRoleName(previousAdminRole)} to ${getRoleName(newAdminRole)}`,
+          description: `${getRoleName(role)}'s admin role changed from ${getRoleName(previousAdminRole)} to ${getRoleName(newAdminRole)} on the ${network} blockchain`,
           alertId: 'FORTA-TOKEN-ROLE-ADMIN-CHANGED',
           protocol: 'forta',
           severity: FindingSeverity.Medium,
@@ -154,20 +162,21 @@ describe('access control role changes bot', () => {
             role,
             previousAdminRole,
             newAdminRole,
+            network,
           },
         }),
       ]);
     });
 
     it('returns a finding with UNKNOWN_ROLE if there is a RoleGranted event with unknown role', async () => {
-      mockTxEvent.filterLog.mockReturnValue([roleGrantedWithUnknownRoleEvent]);
+      mockTxEvent.filterLog.mockReturnValueOnce([roleGrantedWithUnknownRoleEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: 'Role Granted',
-          description: `Role UNKNOWN_ROLE granted for ${account}`,
+          description: `Role UNKNOWN_ROLE granted for ${account} on the ${network} blockchain`,
           alertId: 'FORTA-TOKEN-ROLE-GRANTED',
           protocol: 'forta',
           severity: FindingSeverity.Medium,
@@ -176,6 +185,7 @@ describe('access control role changes bot', () => {
             role: unknownRole,
             account,
             sender,
+            network,
           },
         }),
       ]);
