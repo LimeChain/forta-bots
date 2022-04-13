@@ -1,26 +1,72 @@
-# Large Tether Transfer Agent
+# Forta Core Monitoring
 
 ## Description
 
-This agent detects transactions with large Tether transfers
+This agent detects multiple kinds of events for monitoring
 
 ## Supported Chains
 
-- Ethereum
-- List any other chains this agent can support e.g. BSC
+- Polygon
 
 ## Alerts
 
-Describe each of the type of alerts fired by this agent
+- FORTA-NEW-BOT
 
-- FORTA-1
-  - Fired when a transaction contains a Tether transfer over 10,000 USDT
-  - Severity is always set to "low" (mention any conditions where it could be something else)
-  - Type is always set to "info" (mention any conditions where it could be something else)
-  - Mention any other type of metadata fields included with this alert
+  - Fired when a new bot is minted
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata fields:
+    - to (Minter address)
+    - tokenId (The bot tokenId)
+
+- FORTA-STAKING-THRESHOLD-CHANGED
+
+  - Fired when the staking threshold changes
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata fields:
+    - min (min stake threshold)
+    - max (max stake threshold)
+    - activated (is the staking threshold active)
+
+- FORTA-BOT-STATE-CHANGED
+
+  - Fired when a bot state changes
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata fields:
+    - agentId (The id of the agent)
+    - contractName (Contract calling the event)
+    - disabledBy (Permissions rank of caller)
+    - currentState (The current state of the bot)
+
+- FORTA-SCANNER-STATE-CHANGED
+
+  - Fired when a scanner state changes
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata fields:
+    - scannerId (The id of the scanner)
+    - contractName (Contract calling the event)
+    - disabledBy (Permissions rank of caller)
+    - currentState (The current state of the scanner)
+
+- FORTA-NEW-SCANNER
+  - Fired when a scanner is minted
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata fields:
+    - to (minter address)
+    - tokenId (new scannerId)
 
 ## Test Data
 
 The agent behaviour can be verified with the following transactions:
 
-- 0x3a0f757030beec55c22cbc545dd8a844cbbb2e6019461769e1bc3f3a95d10826 (15,000 USDT)
+- 0xd444769b8a7bbd9d1f3cb52f50f3b6fea056b005719707f454973041d376dd74 (Forta Bot State changed, Polygon)
+
+- 0x20444d0ae6e5c19540c2d241afe41a0970078be80b648a24a01d6e24b8662ae1 (Forta scanner state changed, Polygon)
+
+- 0xa8076d3cda8cb8618abc66b12b4d3a14fc9142880579b5cab460fa6bbff7c5cf (Forta new scanner minted, Polygon)
+
+- 0xadefc7bb65b80a8606f6691525df8c144d2f2e82d9bb7afa162f533adca28f5c (Forta new bot minted, Polygon)
