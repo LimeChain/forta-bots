@@ -26,25 +26,31 @@ function provideHandleTransaction(getContracts) {
     let findings = [];
     const contracts = getContracts();
     //Loop trough each contract for each tx and check if there is an upgraded event called
-    contracts.forEach((ct) => {
-      const txFiltered = txEvent.filterLog(abi, ct.address);
 
-      txFiltered.forEach((tx) => {
-        findings.push(
-          Finding.fromObject({
-            name: "FORTA Contract Upgraded",
-            description: `FORTA Contract Upgraded: ${ct.name}, on ChainId: ${currentChainId}`,
-            alertId: "FORTA-EMIT-UPGRADED",
-            severity: FindingSeverity.Low,
-            type: FindingType.Info,
-            metadata: {
-              name: ct.name,
-              address: ct.address,
-            },
-          })
-        );
-      });
+    const txFiltered = txEvent.filterLog(
+      abi,
+      contracts.map((ct) => ct.address)
+    );
+
+    txFiltered.forEach((tx) => {
+      const contact = contracts.filter(
+        (ct) => ct.address.toLowerCase() == tx.address.toLowerCase()
+      )[0];
+      findings.push(
+        Finding.fromObject({
+          name: "FORTA Contract Upgraded",
+          description: `FORTA Contract Upgraded: ${contact.name}, on ChainId: ${currentChainId}`,
+          alertId: "FORTA-EMIT-UPGRADED",
+          severity: FindingSeverity.Low,
+          type: FindingType.Info,
+          metadata: {
+            name: contact.name,
+            address: contact.address,
+          },
+        })
+      );
     });
+
     return findings;
   };
 }

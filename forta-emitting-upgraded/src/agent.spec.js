@@ -30,6 +30,7 @@ describe("FORTA Contracts Upgraded", () => {
 
     it("returns a finding if there is a Upgraded event called", async () => {
       const mockTetherTransferEvent = {
+        address: "0x123",
         args: {
           address: mockContractObject.address,
         },
