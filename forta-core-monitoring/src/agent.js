@@ -7,6 +7,8 @@ const {
 
 const { abi, contracts } = require("./agent.config.json");
 const { mintAgent } = require("./agent-bot-minted");
+const { stakingChange } = require("./agent-bot-stake-threshold-changed");
+const { mintScanner } = require("./agent-scanner-minted");
 let contractNames;
 let contractAddresses;
 
@@ -21,14 +23,35 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
     const contractAddresses = getContractAddresses();
     const contractNames = getContractNames();
 
+    //Here we listen for the transfer event only on the Agent registry to determine if a new agent(bot) is minted
     const mintFindings = mintAgent(
       txEvent,
       abi[0],
+      contractAddresses[0],
+      contractNames
+    );
+
+    //This handles the staking change findings on any of the contracts available
+    const stakingChangeFindings = stakingChange(
+      txEvent,
+      abi[1],
       contractAddresses,
       contractNames
     );
 
-    findings = [...mintFindings];
+    //We do the same as for the Bot minting agent, but this time we track the scanner registry
+    const mintScannerFindings = mintScanner(
+      txEvent,
+      abi[0],
+      contractAddresses[1],
+      contractNames
+    );
+
+    findings = [
+      ...mintFindings,
+      ...stakingChangeFindings,
+      ...mintScannerFindings,
+    ];
 
     return findings;
   };

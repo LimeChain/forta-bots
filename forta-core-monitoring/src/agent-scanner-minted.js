@@ -7,7 +7,7 @@ const {
 
 const ADDRESS_ZERO = ethers.constants.AddressZero;
 
-function handleBotStakeThresholdChanges(
+function handleScannerMintingTransfer(
   txEvent,
   abi,
   contractAddresses,
@@ -18,21 +18,19 @@ function handleBotStakeThresholdChanges(
   const txFiltered = txEvent.filterLog(abi, contractAddresses);
 
   txFiltered.forEach((tx) => {
-    const { min, max, activated } = tx.args;
-    const minNormalized = ethers.BigNumber.from(min).toString();
-    const maxNormalized = ethers.BigNumber.from(max).toString();
-    if (min && max && activated) {
+    const { from, to, tokenId } = tx.args;
+    const tokenIdNormalized = ethers.BigNumber.from(tokenId).toString();
+    if (tokenId && from === ADDRESS_ZERO) {
       findings.push(
         Finding.fromObject({
-          name: "Forta Staking Threshold changed",
-          description: `Staking threshold changed `,
-          alertId: "FORTA-STAKING-THRESHOLD-CHANGED",
+          name: "Forta new scanner minted",
+          description: `New scanner minted with tokenId: ${tokenIdNormalized}`,
+          alertId: "FORTA-NEW-SCANNER",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {
-            min: minNormalized,
-            max: maxNormalized,
-            activated,
+            to,
+            tokenId: tokenIdNormalized,
           },
         })
       );
@@ -43,5 +41,5 @@ function handleBotStakeThresholdChanges(
 }
 
 module.exports = {
-  stakingChange: handleBotStakeThresholdChanges,
+  mintScanner: handleScannerMintingTransfer,
 };
