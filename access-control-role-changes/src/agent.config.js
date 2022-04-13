@@ -66,7 +66,7 @@ module.exports = {
   createAdminRoleChangedAlert(role, previousAdminRole, newAdminRole) {
     return Finding.fromObject({
       name: 'Role Admin Changed',
-      description: `Role admin changed for role ${getRoleName(role)}`,
+      description: `${getRoleName(role)}'s admin role changed from ${getRoleName(previousAdminRole)} to ${getRoleName(newAdminRole)}`,
       alertId: 'FORTA-ROLE-ADMIN-CHANGED',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
