@@ -1,0 +1,4 @@
+{
+  "abi": "event AccessManagerUpdated(address indexed newAddressManager)",
+  "contracts": {}
+}
