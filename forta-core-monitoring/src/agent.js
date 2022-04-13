@@ -9,6 +9,7 @@ const { abi, contracts } = require("./agent.config.json");
 const { mintAgent } = require("./agent-bot-minted");
 const { stakingChange } = require("./agent-bot-stake-threshold-changed");
 const { mintScanner } = require("./agent-scanner-minted");
+const { stateAgent } = require("./agent-bot-state-updated");
 let contractNames;
 let contractAddresses;
 
@@ -47,10 +48,18 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
       contractNames
     );
 
+    const botStateUpdatedFindings = stateAgent(
+      txEvent,
+      abi,
+      contractAddresses,
+      contractNames
+    );
+
     findings = [
       ...mintFindings,
       ...stakingChangeFindings,
       ...mintScannerFindings,
+      ...botStateUpdatedFindings,
     ];
 
     return findings;
@@ -66,4 +75,5 @@ module.exports = {
     getContractNames,
     getContractAddresses
   ),
+  provideHandleTransaction,
 };
