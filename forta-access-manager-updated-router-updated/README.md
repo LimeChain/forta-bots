@@ -1,26 +1,34 @@
-# Large Tether Transfer Agent
+# FORTA Access Manager/Router Updated
 
 ## Description
 
-This agent detects transactions with large Tether transfers
+This agent detects AccessManagerUpdated/RouterUpdated events being emitted
 
 ## Supported Chains
 
-- Ethereum
-- List any other chains this agent can support e.g. BSC
+- Polygon
 
 ## Alerts
 
-Describe each of the type of alerts fired by this agent
+- FORTA-ROUTER-UPDATED
 
-- FORTA-1
-  - Fired when a transaction contains a Tether transfer over 10,000 USDT
-  - Severity is always set to "low" (mention any conditions where it could be something else)
-  - Type is always set to "info" (mention any conditions where it could be something else)
-  - Mention any other type of metadata fields included with this alert
+  - Fired when a transaction contains a RouterUpdated event
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata fields:
+    - name (The name of the contract that invoked the event)
+    - router (The new router address)
+
+- FORTA-ACCESS-MANAGER-UPDATED
+  - Fired when a transaction contains a AccessManagerUpdated event
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata fields:
+    - name (The name of the contract that invoked the event)
+    - newAddressManager (The new address manager address)
 
 ## Test Data
 
 The agent behaviour can be verified with the following transactions:
 
-- 0x3a0f757030beec55c22cbc545dd8a844cbbb2e6019461769e1bc3f3a95d10826 (15,000 USDT)
+- 0x39dd322c91e6e4953370d0e2a2932d309dc091bc584d38c5fa4ce424835ce527 (Contains both events in a single transaction, Polygon)
