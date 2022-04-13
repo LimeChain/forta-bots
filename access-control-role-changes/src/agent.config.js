@@ -37,7 +37,7 @@ module.exports = {
     return Finding.fromObject({
       name: 'Role Granted',
       description: `Role ${getRoleName(role)} granted for ${account}`,
-      alertId: 'FORTA-ROLE-GRANTED',
+      alertId: 'FORTA-ACCESS-CONTROL-ROLE-GRANTED',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
       type: FindingType.Info,
@@ -52,7 +52,7 @@ module.exports = {
     return Finding.fromObject({
       name: 'Role Revoked',
       description: `Role ${getRoleName(role)} revoked for ${account}`,
-      alertId: 'FORTA-ROLE-REVOKED',
+      alertId: 'FORTA-ACCESS-CONTROL-ROLE-REVOKED',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
       type: FindingType.Info,
@@ -67,7 +67,7 @@ module.exports = {
     return Finding.fromObject({
       name: 'Role Admin Changed',
       description: `${getRoleName(role)}'s admin role changed from ${getRoleName(previousAdminRole)} to ${getRoleName(newAdminRole)}`,
-      alertId: 'FORTA-ROLE-ADMIN-CHANGED',
+      alertId: 'FORTA-ACCESS-CONTROL-ROLE-ADMIN-CHANGED',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
       type: FindingType.Info,

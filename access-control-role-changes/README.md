@@ -12,7 +12,7 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
 
 Describe each of the type of alerts fired by this agent
 
-- FORTA-ROLE-GRANTED
+- FORTA-ACCESS-CONTROL-ROLE-GRANTED
   - Fired when a 'RoleGranted' event is emitted
   - Severity is always set to "medium"
   - Type is always set to "info"
@@ -21,7 +21,7 @@ Describe each of the type of alerts fired by this agent
     - account - the account that the role was granted to
     - sender - the account that originated the contract call
 
-- FORTA-ROLE-REVOKED
+- FORTA-ACCESS-CONTROL-ROLE-REVOKED
   - Fired when a 'RoleRevoked' event is emitted
   - Severity is always set to "medium"
   - Type is always set to "info"
@@ -30,7 +30,7 @@ Describe each of the type of alerts fired by this agent
     - account - the account that the role was granted to
     - sender - the account that originated the contract call
 
-- FORTA-ROLE-ADMIN-CHANGED
+- FORTA-ACCESS-CONTROL-ROLE-ADMIN-CHANGED
   - Fired when a 'RoleAdminChanged' event is emitted
   - Severity is always set to "medium"
   - Type is always set to "info"
