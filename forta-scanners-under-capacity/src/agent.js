@@ -74,18 +74,6 @@ async function initialize() {
       return scannersAsStrings.indexOf(s) === i;
     });
 
-    //Test function to see if the scanners are grouped by chainID and if all of them are enabled
-    // const scannerFilteredAndState = [];
-    // for (let s of scannersFiltered) {
-    //   const scannerStateCall = scannerRegistryContract.getScannerState(s);
-    //   const [scannerState] = await ethcallProvider.all([scannerStateCall]);
-    //   scannerFilteredAndState.push({
-    //     scannerId: s,
-    //     scannerState: scannerState.enabled,
-    //     chainId: id,
-    //   });
-    // }
-
     //Put all found scanners in the global scannersLoaded object
     scannersFiltered.forEach((s) => {
       scannersLoaded.push(s);
