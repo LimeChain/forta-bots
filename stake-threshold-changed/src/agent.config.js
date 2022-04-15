@@ -21,8 +21,8 @@ module.exports = {
 
     return Finding.fromObject({
       name: 'Stake Threshold Changed',
-      description: 'stakeController changed for Forta Scanners',
-      alertId: 'FORTA-STAKE-THRESHOLD-CHANGED',
+      description: 'stakeThreshold changed for Forta Scanners',
+      alertId: 'FORTA-STAKE-THRESHOLD-CHANGED-FOR-SCANNERS',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
       type: FindingType.Info,
@@ -43,8 +43,8 @@ module.exports = {
 
     return Finding.fromObject({
       name: 'Stake Threshold Changed',
-      description: 'stakeController changed for Forta Agents',
-      alertId: 'FORTA-STAKE-THRESHOLD-CHANGED',
+      description: 'stakeThreshold changed for Forta Agents',
+      alertId: 'FORTA-STAKE-THRESHOLD-CHANGED-FOR-AGENTS',
       protocol: 'forta',
       severity: FindingSeverity.Medium,
       type: FindingType.Info,

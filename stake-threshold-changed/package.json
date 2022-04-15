@@ -1,7 +1,7 @@
 {
-  "name": "forta-stake-controller-changed-bot",
+  "name": "forta-stake-threshold-changed-bot",
   "version": "0.0.1",
-  "description": "Detects if a 'StakeControllerUpdated' event is emitted from Forta Scanners or the Forta Agents contracts",
+  "description": "Detects if a 'StakeThresholdChanged' event is emitted from Forta Scanners or the Forta Agents contracts",
   "chainIds": [
     137
   ],

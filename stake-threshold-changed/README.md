@@ -1,8 +1,8 @@
-# Forta Stake Controller Changed Bot
+# Forta Stake Threshold Changed Bot
 
 ## Description
 
-Detects if a 'StakeControllerUpdated' event is emitted from Forta Scanners or the Forta Agents contracts
+Detects if a 'StakeThresholdChanged' event is emitted from Forta Scanners or the Forta Agents contracts
 
 ## Supported Chains
 
@@ -10,13 +10,24 @@ Detects if a 'StakeControllerUpdated' event is emitted from Forta Scanners or th
 
 ## Alerts
 
-- FORTA-STAKE-CONTROLLER-CHANGED
-  - Fired when a 'StakeControllerUpdated' event is emitted
+- FORTA-STAKE-THRESHOLD-CHANGED-FOR-SCANNERS
+  - Fired when a 'StakeThresholdChanged' event is emitted from the Forta Scanners contract
   - Severity is always set to "medium"
   - Type is always set to "info"
   - Metadata:
-    - address - the address of the contract that emitted the event
-    - newstakeController - the new stakeController
+    - chainId - the affected scanners' chainId
+    - min - Minimum threshold
+    - max - Maximum threshold
+    - activated - 'true' if the the threshold is active and 'false' if is not
+
+- FORTA-STAKE-THRESHOLD-CHANGED-FOR-AGENTS
+  - Fired when a 'StakeThresholdChanged' event is emitted from the Forta Agents contract
+  - Severity is always set to "medium"
+  - Type is always set to "info"
+  - Metadata:
+    - min - Minimum threshold
+    - max - Maximum threshold
+    - activated - 'true' if the the threshold is active and 'false' if is not
 
 ## Test Data
 
