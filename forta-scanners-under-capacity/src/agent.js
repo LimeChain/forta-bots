@@ -45,6 +45,7 @@ async function initialize() {
       agentCalls.push(agentRegistryContract.getAgentByChainAndIndex(id, i));
     }
 
+    //All agents
     let agents = await ethcallProvider.all(agentCalls);
 
     const agentDataCalls = [];
@@ -52,6 +53,7 @@ async function initialize() {
       agentDataCalls.push(agentRegistryContract.isEnabled(a));
     });
 
+    //Remove disabled agents from the list since they are not located on a scanner eitherway
     const agentEnabled = await ethcallProvider.all(agentDataCalls);
 
     agents = agents.filter((a, i) => {
@@ -65,6 +67,7 @@ async function initialize() {
     //Get all scanner count for a specific agent
     const numScannersFor = await ethcallProvider.all(numScannersForCalls);
 
+    //Get scanners by getting the total scanners for an agent and then looping trough each agent and pushing the scannerAt call for later
     const scannerCalls = [];
     numScannersFor
       .map((e) => e.toNumber())
@@ -93,10 +96,12 @@ async function initialize() {
     });
   }
 
+  //Filter all scanners just in case there are duplicates
   scannersLoaded = scannersLoaded.filter((s, i) => {
     return scannersLoaded.indexOf(s) === i;
   });
 
+  //Add the chainId for each scanner
   const scannersLoadedWithChainId = [];
   for (let s of scannersLoaded) {
     const scannerChainIdCall = scannerRegistryContract.getScannerChainId(s);
@@ -109,6 +114,7 @@ async function initialize() {
     });
   }
 
+  //Get the count of scanners for each ChainId
   const scannersByChainCount = {};
   for (let obj of scannersLoadedWithChainId) {
     let key = obj["chainId"];
@@ -120,7 +126,12 @@ async function initialize() {
   scannersLoaded = scannersLoadedWithChainId;
 }
 
-function provideHandleTransaction(scannersLoaded, scannersCountByChainId) {
+//Here we check if a new scanner is minted so we can add it to the array of scanners
+function provideHandleTransaction(
+  scannersLoaded,
+  scannersCountByChainId,
+  ethcallProvider
+) {
   return async function handleTransaction(txEvent) {
     const findings = [];
     const txFiltered = txEvent.filterLog(mintAbi, contractAddresses[2]);
@@ -135,6 +146,7 @@ function provideHandleTransaction(scannersLoaded, scannersCountByChainId) {
           scannerChainIdCall,
         ]);
         const scannerChainIdNormalized = scannerChainId.toNumber();
+        scannersCountByChainId[0][scannerChainIdNormalized]++;
         const tokenIdString = tokenId.toString();
         scannersLoaded.push({
           scannerId: tokenIdString,
@@ -160,6 +172,7 @@ function provideHandleTransaction(scannersLoaded, scannersCountByChainId) {
   };
 }
 
+//Here we check once per block if scanners of a specific chainId are over or under capacity
 function provideHandleBlock(
   scannersLoaded,
   scannersCountByChainId,
@@ -229,7 +242,8 @@ module.exports = {
   initialize,
   handleTransaction: provideHandleTransaction(
     scannersLoaded,
-    scannersCountByChainId
+    scannersCountByChainId,
+    ethcallProvider
   ),
   handleBlock: provideHandleBlock(
     scannersLoaded,

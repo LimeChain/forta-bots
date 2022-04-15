@@ -6,7 +6,7 @@ const {
   ethers,
 } = require("forta-agent");
 const { provideHandleBlock, provideHandleTransaction } = require("./agent");
-
+const ADDRESS_ZERO = ethers.constants.AddressZero;
 describe("Scanners capacity by chainId", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
@@ -16,12 +16,14 @@ describe("Scanners capacity by chainId", () => {
     const mockEthCallProvider = {
       all: jest
         .fn()
+        .mockReturnValueOnce([ethers.BigNumber.from(137)])
         .mockReturnValueOnce([ethers.BigNumber.from(1)])
-        .mockReturnValueOnce([ethers.BigNumber.from(50)]),
+        .mockReturnValue([ethers.BigNumber.from(50)]),
     };
     const handleTransaction = provideHandleTransaction(
       mockScannersLoaded,
-      mockScannerCountByChainId
+      mockScannerCountByChainId,
+      mockEthCallProvider
     );
     const handleBlock = provideHandleBlock(
       mockScannersLoaded,
@@ -42,6 +44,30 @@ describe("Scanners capacity by chainId", () => {
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
     });
 
+    it("returns a finding if there is a new scanners minted", async () => {
+      const mockMintedTx = {
+        args: { from: ADDRESS_ZERO, tokenId: ethers.BigNumber.from("123") },
+      };
+      mockTxEvent.filterLog.mockReturnValue([mockMintedTx]);
+
+      const findings = await handleTransaction(mockTxEvent);
+
+      expect(findings).toStrictEqual([
+        Finding.fromObject({
+          name: "FORTA Scanner minted",
+          description: `FORTA Scanner minted with scannerId: 123`,
+          alertId: "FORTA-SCANNER-MINTED",
+          severity: FindingSeverity.Info,
+          type: FindingType.Info,
+          metadata: {
+            scannerId: "123",
+            chainId: 137,
+          },
+        }),
+      ]);
+      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
+    });
+
     it("returns a finding if Scanners from a chainId are under capacity", async () => {
       const findings = await handleBlock();
 
@@ -59,7 +85,7 @@ describe("Scanners capacity by chainId", () => {
           },
         }),
       ]);
-      expect(mockEthCallProvider.all).toHaveBeenCalledTimes(1);
+      expect(mockEthCallProvider.all).toHaveBeenCalledTimes(3);
     });
     it("returns a finding if Scanners from a chainId are over capacity", async () => {
       const findings = await handleBlock();
@@ -78,7 +104,7 @@ describe("Scanners capacity by chainId", () => {
           },
         }),
       ]);
-      expect(mockEthCallProvider.all).toHaveBeenCalledTimes(2);
+      expect(mockEthCallProvider.all).toHaveBeenCalledTimes(5);
     });
   });
 });
