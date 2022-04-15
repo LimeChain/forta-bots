@@ -1,9 +1,9 @@
 {
-  "name": "forta-agent-starter",
+  "name": "forta-scanners-capacity-check",
   "version": "0.0.1",
-  "description": "Forta Agent Javascript starter project",
+  "description": "This agent detects if scanners of a specific chainId are under or over capacity",
   "chainIds": [
-    1
+    137
   ],
   "scripts": {
     "start": "npm run start:dev",

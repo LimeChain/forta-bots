@@ -1,26 +1,45 @@
-# Large Tether Transfer Agent
+# Forta scanners capacity check
 
 ## Description
 
-This agent detects transactions with large Tether transfers
+This agent detects if scanners of a specific chainId are under or over capacity
 
 ## Supported Chains
 
-- Ethereum
-- List any other chains this agent can support e.g. BSC
+- Polygon
 
 ## Alerts
 
-Describe each of the type of alerts fired by this agent
+- FORTA-SCANNER-MINTED
 
-- FORTA-1
-  - Fired when a transaction contains a Tether transfer over 10,000 USDT
-  - Severity is always set to "low" (mention any conditions where it could be something else)
-  - Type is always set to "info" (mention any conditions where it could be something else)
-  - Mention any other type of metadata fields included with this alert
+  - Fired when a transaction contains a Scanner mint event
+  - Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata fields:
+    - scannerId (The minted scanenrId)
+    - chainId (The minted scanner chainId)
+
+- FORTA-SCANNER-OVER-CAPACITY-THRESHOLD
+
+  - Fired when scanners from a chain are over their capacity threshold
+  - Severity is always set to "Medium"
+  - Type is always set to "info"
+  - Metadata fields:
+    - threshold (The predefined threshold %)
+    - capacityPercentage (The current threshold %)
+    - chainId (The chainId where the scanners are over the threshold)
+
+- FORTA-SCANNER-UNDER-CAPACITY-THRESHOLD
+  - Fired when scanners from a chain are under their capacity threshold
+  - Severity is always set to "Medium"
+  - Type is always set to "info"
+  - Metadata fields:
+    - threshold (The predefined threshold %)
+    - capacityPercentage (The current threshold %)
+    - chainId (The chainId where the scanners are under the threshold)
 
 ## Test Data
 
 The agent behaviour can be verified with the following transactions:
 
-- 0x3a0f757030beec55c22cbc545dd8a844cbbb2e6019461769e1bc3f3a95d10826 (15,000 USDT)
+- 0x90026c1d8e3b556efee1cac72c7ff14a629238dd6202efe5a91b4096ba51df71 (Scanner is minted, Polygon)
