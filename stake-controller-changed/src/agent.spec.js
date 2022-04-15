@@ -20,14 +20,14 @@ describe('stake controller changed bot', () => {
       filterLog: jest.fn(),
     };
 
-    it('returns empty findings if there are no role changes', async () => {
+    it('returns empty findings if there are no StakeControllerChanged events', async () => {
       mockTxEvent.filterLog.mockReturnValueOnce([]);
 
       const findings = await handleTransaction(mockTxEvent);
       expect(findings).toStrictEqual([]);
     });
 
-    it('returns a finding if there is a RoleGranted event', async () => {
+    it('returns a finding if there is a StakeControllerChanged event', async () => {
       mockTxEvent.filterLog.mockReturnValueOnce([event]);
 
       const findings = await handleTransaction(mockTxEvent);
