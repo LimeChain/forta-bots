@@ -9,10 +9,12 @@ module.exports = {
   contracts,
   EVENT_SIGNATURE: 'event StakeControllerUpdated(address indexed newstakeController)',
   createAlert(address, newstakeController) {
+    const contractName = contracts[address];
+    const alertName = contractName.replace(' ', '-').toUpperCase();
     return Finding.fromObject({
       name: 'Stake Controller Changed',
-      description: `stakeController changed for ${contracts[address]}`,
-      alertId: 'FORTA-STAKE-CONTROLLER-CHANGED',
+      description: `stakeController changed for ${contractName}`,
+      alertId: `FORTA-STAKE-CONTROLLER-CHANGED-FOR-${alertName}`,
       protocol: 'forta',
       severity: FindingSeverity.Medium,
       type: FindingType.Info,

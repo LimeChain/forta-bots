@@ -10,8 +10,16 @@ Detects if a 'StakeControllerUpdated' event is emitted from Forta Scanners or th
 
 ## Alerts
 
-- FORTA-STAKE-CONTROLLER-CHANGED
-  - Fired when a 'StakeControllerUpdated' event is emitted
+- FORTA-STAKE-CONTROLLER-CHANGED-FOR-SCANNERS
+  - Fired when a 'StakeControllerUpdated' event is emitted from the Forta Scanners contract
+  - Severity is always set to "medium"
+  - Type is always set to "info"
+  - Metadata:
+    - address - the address of the contract that emitted the event
+    - newstakeController - the new stakeController
+
+- FORTA-STAKE-CONTROLLER-CHANGED-FOR-AGENTS
+  - Fired when a 'StakeControllerUpdated' event is emitted from the Forta Agents contract
   - Severity is always set to "medium"
   - Type is always set to "info"
   - Metadata:
