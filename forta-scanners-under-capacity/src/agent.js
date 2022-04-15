@@ -28,6 +28,7 @@ const dispatcherContract = new Contract(contractAddresses[0], dispatcherAbi);
 const scannerRegistryContract = new Contract(contractAddresses[2], scannerAbi);
 
 let scannersLoaded = [];
+const scannersCountByChainId = [];
 async function initialize() {
   await ethcallProvider.init();
 
@@ -43,7 +44,18 @@ async function initialize() {
       agentCalls.push(agentRegistryContract.getAgentByChainAndIndex(id, i));
     }
 
-    const agents = await ethcallProvider.all(agentCalls);
+    let agents = await ethcallProvider.all(agentCalls);
+
+    const agentDataCalls = [];
+    agents.forEach((a) => {
+      agentDataCalls.push(agentRegistryContract.isEnabled(a));
+    });
+
+    const agentEnabled = await ethcallProvider.all(agentDataCalls);
+
+    agents = agents.filter((a, i) => {
+      if (agentEnabled[i] == true) return a;
+    });
 
     const numScannersForCalls = agents.map((a) =>
       dispatcherContract.numScannersFor(a)
@@ -80,22 +92,50 @@ async function initialize() {
     });
   }
 
-  //Do a secondary filtering since there were duplicates after completion
   scannersLoaded = scannersLoaded.filter((s, i) => {
     return scannersLoaded.indexOf(s) === i;
   });
+
+  const scannersLoadedWithChainId = [];
+  for (let s of scannersLoaded) {
+    const scannerChainIdCall = scannerRegistryContract.getScannerChainId(s);
+    const [scannerChainId] = await ethcallProvider.all([scannerChainIdCall]);
+
+    const scannerChainIdNormalized = scannerChainId.toNumber();
+    scannersLoadedWithChainId.push({
+      scannerId: s,
+      chainId: scannerChainIdNormalized,
+    });
+  }
+
+  const scannersByChainCount = {};
+  for (let obj of scannersLoadedWithChainId) {
+    let key = obj["chainId"];
+    scannersByChainCount[key] = scannersLoadedWithChainId.filter(
+      (s) => s["chainId"] == key
+    ).length;
+  }
+  scannersCountByChainId.push(scannersByChainCount);
+  scannersLoaded = scannersLoadedWithChainId;
 }
 
 const handleTransaction = async (txEvent) => {
   const findings = [];
   const txFiltered = txEvent.filterLog(mintAbi, contractAddresses[2]);
 
-  txFiltered.forEach((tx) => {
+  for (let tx of txFiltered) {
     const { from, tokenId } = tx.args;
 
     if (from === ADDRESS_ZERO) {
+      const scannerChainIdCall =
+        scannerRegistryContract.getScannerChainId(tokenId);
+      const [scannerChainId] = await ethcallProvider.all([scannerChainIdCall]);
+      const scannerChainIdNormalized = scannerChainId.toNumber();
       const tokenIdString = tokenId.toString();
-      scannersLoaded.push(tokenIdString);
+      scannersLoaded.push({
+        scannerId: tokenIdString,
+        chainId: scannerChainIdNormalized,
+      });
       findings.push(
         Finding.fromObject({
           name: "FORTA Scanner minted",
@@ -105,50 +145,63 @@ const handleTransaction = async (txEvent) => {
           type: FindingType.Info,
           metadata: {
             scannerId: tokenIdString,
+            chainId: scannerChainIdNormalized,
           },
         })
       );
     }
-  });
+  }
 
   return findings;
 };
 
 const handleBlock = async (blockNumber) => {
   const findings = [];
+  for (let id of config.chainIds) {
+    let scannerCapacityForChainId = 0;
+    for (let s of scannersLoaded) {
+      if (s.chainId != id) continue;
+      const scannerCapacityCall = dispatcherContract.numAgentsFor(s.scannerId);
+      const [scannerCapacity] = await ethcallProvider.all([
+        scannerCapacityCall,
+      ]);
+      const scannerCapacityPercentage = (scannerCapacity.toNumber() / 25) * 100;
+      scannerCapacityForChainId += scannerCapacityPercentage;
+    }
 
-  for (let s of scannersLoaded) {
-    const scannerCapacityCall = dispatcherContract.numAgentsFor(s);
-    const [scannerCapacity] = await ethcallProvider.all([scannerCapacityCall]);
-    const scannerCapacityPercentage = (scannerCapacity.toNumber() / 25) * 100;
+    const scannerCapacityForChainIdNormalized =
+      scannerCapacityForChainId / scannersCountByChainId[0][id];
+    if (isNaN(scannerCapacityForChainIdNormalized)) continue;
 
-    if (scannerCapacityPercentage > config.overCapacityThreshold) {
+    if (scannerCapacityForChainIdNormalized > config.overCapacityThreshold) {
       findings.push(
         Finding.fromObject({
           name: "FORTA Scanner over capacity threshold",
-          description: `FORTA Scanner capacity is almost full for scannerId: ${s}`,
+          description: `FORTA Scanners capacity is almost full for chainId: ${id}`,
           alertId: "FORTA-SCANNER-OVER-CAPACITY-THRESHOLD",
           severity: FindingSeverity.Medium,
           type: FindingType.Info,
           metadata: {
             threshold: config.overCapacityThreshold,
-            capacityPercentage: scannerCapacityPercentage,
-            scannerId: s,
+            capacityPercentage: scannerCapacityForChainIdNormalized,
+            chainId: id,
           },
         })
       );
-    } else if (scannerCapacityPercentage < config.underCapacityThreshold) {
+    } else if (
+      scannerCapacityForChainIdNormalized < config.underCapacityThreshold
+    ) {
       findings.push(
         Finding.fromObject({
-          name: "FORTA Scanner under capacity threshold",
-          description: `FORTA Scanner is almost under capacity threshold for scannerId: ${s}`,
+          name: "FORTA Scanner under capacity threshold for chain",
+          description: `FORTA Scanners are almost under capacity threshold for chainId: ${id}`,
           alertId: "FORTA-SCANNER-UNDER-CAPACITY-THRESHOLD",
           severity: FindingSeverity.Medium,
           type: FindingType.Info,
           metadata: {
             threshold: config.underCapacityThreshold,
-            capacityPercentage: scannerCapacityPercentage,
-            scannerId: s,
+            capacityPercentage: scannerCapacityForChainIdNormalized,
+            chainId: id,
           },
         })
       );
