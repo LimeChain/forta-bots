@@ -6,6 +6,7 @@ const config = {
   },
   chainIds: [1, 137, 56, 43114, 42161, 10, 250],
   SLA_THRESHOLD: 0.9,
+  interval: 60 * 1000,
 };
 
 module.exports = {

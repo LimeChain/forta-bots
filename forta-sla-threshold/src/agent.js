@@ -26,6 +26,9 @@ const agentRegistryContract = new Contract(
 );
 const dispatcherContract = new Contract(contractAddresses[0], dispatcherAbi);
 let scannersLoaded = [];
+let alerts = [];
+let isChecking = false;
+let lastCheck = 0;
 
 async function initialize() {
   await ethcallProvider.init();
@@ -120,40 +123,55 @@ function provideHandleTransaction(scannersLoaded) {
 
 function provideHandleBlock(scannersLoaded) {
   return async function handleBlock(blockNumber) {
-    const findings = [];
-
-    for (let s of scannersLoaded) {
-      const scannerAddress = s.toHexString();
-
-      try {
-        const scannerSlaData = await axios.default.get(
-          "https://api.forta.network/stats/sla/scanner/" + scannerAddress
-        );
-
-        const scannerSlaAvgValue = scannerSlaData.data.statistics.avg;
-
-        if (scannerSlaAvgValue < config.SLA_THRESHOLD) {
-          findings.push(
-            Finding.fromObject({
-              name: "Scanner SLA under threshold",
-              description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${s}`,
-              alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
-              severity: FindingSeverity.High,
-              type: FindingType.Info,
-              metadata: {
-                scannerId: s,
-                slaValue: scannerSlaAvgValue,
-              },
-            })
-          );
-        }
-      } catch (e) {
-        console.log(e.message);
-      }
+    const now = Date.now();
+    let findings = [];
+    if (alerts.length > 0) {
+      findings = alerts;
+      alerts = [];
+    }
+    if (!isChecking && now - lastCheck > config.interval) {
+      runJob(scannersLoaded);
     }
     return findings;
   };
 }
+
+async function runJob(scannersLoaded) {
+  isChecking = true;
+
+  for (let s of scannersLoaded) {
+    const scannerAddress = s.toHexString();
+
+    try {
+      const scannerSlaData = await axios.default.get(
+        "https://api.forta.network/stats/sla/scanner/" + scannerAddress
+      );
+
+      const scannerSlaAvgValue = scannerSlaData.data.statistics.avg;
+
+      if (scannerSlaAvgValue < config.SLA_THRESHOLD) {
+        alerts.push(
+          Finding.fromObject({
+            name: "Scanner SLA under threshold",
+            description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${s}`,
+            alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
+            severity: FindingSeverity.High,
+            type: FindingType.Info,
+            metadata: {
+              scannerId: s,
+              slaValue: scannerSlaAvgValue,
+            },
+          })
+        );
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  }
+  isChecking = false;
+  lastCheck = Date.now();
+}
+
 module.exports = {
   initialize,
   handleTransaction: provideHandleTransaction(scannersLoaded),

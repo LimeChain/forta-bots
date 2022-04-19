@@ -15,7 +15,11 @@ describe("SLA Threshold agent", () => {
     mockTxEvent.filterLog = jest.fn();
     const mockScannersLoaded = [ethers.BigNumber.from("1234")];
     const handleTransaction = provideHandleTransaction(mockScannersLoaded);
-    const handleBlock = provideHandleBlock(mockScannersLoaded);
+    axios.default.get
+      .mockResolvedValueOnce({
+        data: { statistics: { avg: 0.89 } },
+      })
+      .mockResolvedValue({ data: { statistics: { avg: 0.91 } } });
     beforeEach(() => {
       mockTxEvent.filterLog.mockReset();
     });
@@ -29,20 +33,11 @@ describe("SLA Threshold agent", () => {
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
     });
 
-    it("Does not return a finding if there is a Scanner  thats above sla threshold", async () => {
-      axios.default.get.mockResolvedValue({
-        data: { statistics: { avg: 0.91 } },
-      });
-      const findings = await handleBlock();
-
-      expect(findings).toStrictEqual([]);
-      expect(axios.default.get).toHaveBeenCalledTimes(1);
-    });
-
     it("returns a finding if there is a Scanner with under sla threshold", async () => {
-      axios.default.get.mockResolvedValue({
-        data: { statistics: { avg: 0.89 } },
-      });
+      const handleBlock = provideHandleBlock(mockScannersLoaded);
+      await handleBlock();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       const findings = await handleBlock();
 
       expect(findings).toStrictEqual([
@@ -58,7 +53,18 @@ describe("SLA Threshold agent", () => {
           },
         }),
       ]);
-      expect(axios.default.get).toHaveBeenCalledTimes(2);
+      expect(axios.default.get).toHaveBeenCalledTimes(1);
+    });
+
+    it("Does not return a finding if there is a Scanner  thats above sla threshold", async () => {
+      const handleBlock = provideHandleBlock(mockScannersLoaded);
+      await handleBlock();
+
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      const findings = await handleBlock();
+
+      expect(findings).toStrictEqual([]);
+      expect(axios.default.get).toHaveBeenCalledTimes(1);
     });
   });
 });
