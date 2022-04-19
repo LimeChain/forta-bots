@@ -9,7 +9,7 @@ const fs = require("fs");
 const { Contract, Provider } = require("ethers-multicall");
 const { config } = require("./agent.config");
 const ADDRESS_ZERO = ethers.constants.AddressZero;
-
+const axios = require("axios");
 const agentRegistryAbi = require("./abis/agentregistry.json");
 const scannerAbi = require("./abis/scannerregistry.json");
 const dispatcherAbi = require("./abis/dispatcher.json");
@@ -32,6 +32,13 @@ const scannersCountByChainId = [];
 
 async function initialize() {
   await ethcallProvider.init();
+  const fetchedConfig = await axios.default.get(
+    "https://gist.githubusercontent.com/Tdrachev/984a1ded766e1334dd28e383fb157d5a/raw/cad40372ef992b4b38f650ae7353d9ff67d40466/scanner-threshold-config.json"
+  );
+  const jsonConfig = fetchedConfig.data;
+
+  config.underCapacityThreshold = jsonConfig.underCapacityThreshold;
+  config.overCapacityThreshold = jsonConfig.overCapacityThreshold;
 
   //Here we loop trough all available chain ids and fetch all the scannerIds that are currently available
   for (let id of config.chainIds) {
