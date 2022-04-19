@@ -28,7 +28,7 @@ const dispatcherContract = new Contract(contractAddresses[0], dispatcherAbi);
 const scannerRegistryContract = new Contract(contractAddresses[2], scannerAbi);
 
 let scannersLoaded = [];
-const scannersCountByChainId = [];
+let scannersCountByChainId = {};
 const scannersLoadedWithChainId = [];
 
 async function initialize() {
@@ -133,7 +133,8 @@ async function initialize() {
       (s) => s["chainId"] == key
     ).length;
   }
-  scannersCountByChainId.push(scannersByChainCount);
+
+  Object.assign(scannersCountByChainId, scannersByChainCount);
 }
 
 //Here we check if a new scanner is minted so we can add it to the array of scanners
@@ -156,7 +157,7 @@ function provideHandleTransaction(
           scannerChainIdCall,
         ]);
         const scannerChainIdNormalized = scannerChainId.toNumber();
-        scannersCountByChainId[0][scannerChainIdNormalized]++;
+        scannersCountByChainId[scannerChainIdNormalized]++;
         const tokenIdString = tokenId.toString();
         scannersLoaded.push({
           scannerId: tokenIdString,
@@ -196,7 +197,8 @@ function provideHandleBlock(
       }
 
       const scannerCapacityForChainIdNormalized =
-        scannerCapacityForChainId / scannersCountByChainId[0][id];
+        scannerCapacityForChainId / scannersCountByChainId[id];
+
       if (isNaN(scannerCapacityForChainIdNormalized)) continue;
 
       if (scannerCapacityForChainIdNormalized > config.overCapacityThreshold) {

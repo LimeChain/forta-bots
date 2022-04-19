@@ -15,7 +15,7 @@ describe("Scanners capacity by chainId", () => {
       { scannerId: "1234", chainId: 1 },
       { scannerId: "1234", chainId: 1 },
     ];
-    const mockScannerCountByChainId = [{ 1: 1 }];
+    const mockScannerCountByChainId = { 1: 1 };
     const mockEthCallProvider = {
       all: jest
         .fn()
