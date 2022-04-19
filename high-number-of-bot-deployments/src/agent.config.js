@@ -1,7 +1,7 @@
 const { Finding, FindingSeverity, FindingType } = require('forta-agent');
 
-const COUNT_THRESHOLD = 3;
-const TIME_INTERVAL_MINS = 300;
+const COUNT_THRESHOLD = 10;
+const TIME_INTERVAL_MINS = 60;
 
 module.exports = {
   AGENT_REGISTRY: '0x61447385B019187daa48e91c55c02AF1F1f3F863',
