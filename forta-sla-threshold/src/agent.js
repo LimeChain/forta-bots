@@ -135,41 +135,42 @@ const handleBlock = async (blockNumber) => {
   const findings = [];
 
   for (let s of scannersLoaded) {
-    const scannerDataCall = scannerRegistryContract.getScanner(s);
+    // const scannerDataCall = scannerRegistryContract.getScanner(s);
 
-    const [scannerData] = await ethcallProvider.all([scannerDataCall]);
-    console.log(s);
-    // try {
-    //   const scannerSlaData = await axios.default.get(
-    //     "https://api.forta.network/stats/sla/scanner/" +
-    //       scannerId.manifest.toString()
-    //   );
+    // const [scannerData] = await ethcallProvider.all([scannerDataCall]);
 
-    //   const scannerSlaAvgValue = scannerSlaData.data.statistics.avg;
-    //   if (scannerSlaAvgValue < config.SLA_THRESHOLD) {
-    //     findings.push(
-    //       Finding.fromObject({
-    //         name: "Scanner SLA under threshold",
-    //         description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${scannerId.manifest}`,
-    //         alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
-    //         severity: FindingSeverity.High,
-    //         type: FindingType.Info,
-    //         metadata: {
-    //           scannerId: scannerId.manifest,
-    //           slaValue: scannerSlaAvgValue,
-    //         },
-    //       })
-    //     );
-    //   }
-    // } catch (e) {
-    //   console.log(e.message);
-    // }
+    const scannerAddress = ethers.BigNumber.from(s);
+
+    try {
+      const scannerSlaData = await axios.default.get(
+        "https://api.forta.network/stats/sla/scanner/" + scannerAddress
+      );
+      console.log(scannerSlaData);
+      const scannerSlaAvgValue = scannerSlaData.data.statistics.avg;
+      console.log(scannerSlaAvgValue);
+      if (scannerSlaAvgValue < config.SLA_THRESHOLD) {
+        findings.push(
+          Finding.fromObject({
+            name: "Scanner SLA under threshold",
+            description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${scannerId.manifest}`,
+            alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
+            severity: FindingSeverity.High,
+            type: FindingType.Info,
+            metadata: {
+              scannerId: scannerId.manifest,
+              slaValue: scannerSlaAvgValue,
+            },
+          })
+        );
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
   }
   return findings;
 };
 
 module.exports = {
-  initialize,
   handleTransaction: provideHandleTransaction(scannersLoaded),
   handleBlock,
 };
