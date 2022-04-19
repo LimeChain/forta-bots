@@ -5,68 +5,60 @@ const {
   createTransactionEvent,
   ethers,
 } = require("forta-agent");
-const {
-  handleTransaction,
-  ERC20_TRANSFER_EVENT,
-  TETHER_ADDRESS,
-  TETHER_DECIMALS,
-} = require("./agent");
+const { provideHandleBlock, provideHandleTransaction } = require("./agent");
+const axios = require("axios");
+jest.mock("axios");
 
-describe("high tether transfer agent", () => {
+describe("SLA Threshold agent", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
-
+    const mockScannersLoaded = [ethers.BigNumber.from("1234")];
+    const handleTransaction = provideHandleTransaction(mockScannersLoaded);
+    const handleBlock = provideHandleBlock(mockScannersLoaded);
     beforeEach(() => {
       mockTxEvent.filterLog.mockReset();
     });
 
-    it("returns empty findings if there are no Tether transfers", async () => {
+    it("returns empty findings if there are no Mint events", async () => {
       mockTxEvent.filterLog.mockReturnValue([]);
 
       const findings = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledWith(
-        ERC20_TRANSFER_EVENT,
-        TETHER_ADDRESS
-      );
     });
 
-    it("returns a finding if there is a Tether transfer over 10,000", async () => {
-      const mockTetherTransferEvent = {
-        args: {
-          from: "0xabc",
-          to: "0xdef",
-          value: ethers.BigNumber.from("20000000000"), //20k with 6 decimals
-        },
-      };
-      mockTxEvent.filterLog.mockReturnValue([mockTetherTransferEvent]);
+    it("Does not return a finding if there is a Scanner  thats above sla threshold", async () => {
+      axios.default.get.mockResolvedValue({
+        data: { statistics: { avg: 0.91 } },
+      });
+      const findings = await handleBlock();
 
-      const findings = await handleTransaction(mockTxEvent);
+      expect(findings).toStrictEqual([]);
+      expect(axios.default.get).toHaveBeenCalledTimes(1);
+    });
 
-      const normalizedValue = mockTetherTransferEvent.args.value.div(
-        10 ** TETHER_DECIMALS
-      );
+    it("returns a finding if there is a Scanner with under sla threshold", async () => {
+      axios.default.get.mockResolvedValue({
+        data: { statistics: { avg: 0.89 } },
+      });
+      const findings = await handleBlock();
+
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "High Tether Transfer",
-          description: `High amount of USDT transferred: ${normalizedValue}`,
-          alertId: "FORTA-1",
-          severity: FindingSeverity.Low,
+          name: "Scanner SLA under threshold",
+          description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${mockScannersLoaded[0]}`,
+          alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
+          severity: FindingSeverity.High,
           type: FindingType.Info,
           metadata: {
-            to: mockTetherTransferEvent.args.to,
-            from: mockTetherTransferEvent.args.from,
+            scannerId: mockScannersLoaded[0],
+            slaValue: 0.89,
           },
         }),
       ]);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledWith(
-        ERC20_TRANSFER_EVENT,
-        TETHER_ADDRESS
-      );
+      expect(axios.default.get).toHaveBeenCalledTimes(2);
     });
   });
 });

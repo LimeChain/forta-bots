@@ -12,7 +12,7 @@ const ADDRESS_ZERO = ethers.constants.AddressZero;
 
 const agentRegistryAbi = require("./abis/agentregistry.json");
 const dispatcherAbi = require("./abis/dispatcher.json");
-const scannerAbi = require("./abis/scannerregistry.json");
+
 const mintAbi =
   "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)";
 
@@ -25,7 +25,6 @@ const agentRegistryContract = new Contract(
   agentRegistryAbi
 );
 const dispatcherContract = new Contract(contractAddresses[0], dispatcherAbi);
-const scannerRegistryContract = new Contract(contractAddresses[2], scannerAbi);
 let scannersLoaded = [];
 
 async function initialize() {
@@ -90,7 +89,7 @@ async function initialize() {
 
     //Put all found scanners in the global scannersLoaded object
     scannersFiltered.forEach((s) => {
-      scannersLoaded.push(s);
+      scannersLoaded.push(ethers.BigNumber.from(s));
     });
   }
 
@@ -112,18 +111,6 @@ function provideHandleTransaction(scannersLoaded) {
       if (from === ADDRESS_ZERO) {
         const tokenIdString = tokenId.toString();
         scannersLoaded.push(tokenIdString);
-        findings.push(
-          Finding.fromObject({
-            name: "FORTA Scanner minted",
-            description: `FORTA Scanner minted with scannerId: ${tokenIdString}`,
-            alertId: "FORTA-SCANNER-MINTED",
-            severity: FindingSeverity.Info,
-            type: FindingType.Info,
-            metadata: {
-              scannerId: tokenIdString,
-            },
-          })
-        );
       }
     }
 
@@ -131,46 +118,46 @@ function provideHandleTransaction(scannersLoaded) {
   };
 }
 
-const handleBlock = async (blockNumber) => {
-  const findings = [];
+function provideHandleBlock(scannersLoaded) {
+  return async function handleBlock(blockNumber) {
+    const findings = [];
 
-  for (let s of scannersLoaded) {
-    // const scannerDataCall = scannerRegistryContract.getScanner(s);
+    for (let s of scannersLoaded) {
+      const scannerAddress = s.toHexString();
 
-    // const [scannerData] = await ethcallProvider.all([scannerDataCall]);
-
-    const scannerAddress = ethers.BigNumber.from(s);
-
-    try {
-      const scannerSlaData = await axios.default.get(
-        "https://api.forta.network/stats/sla/scanner/" + scannerAddress
-      );
-      console.log(scannerSlaData);
-      const scannerSlaAvgValue = scannerSlaData.data.statistics.avg;
-      console.log(scannerSlaAvgValue);
-      if (scannerSlaAvgValue < config.SLA_THRESHOLD) {
-        findings.push(
-          Finding.fromObject({
-            name: "Scanner SLA under threshold",
-            description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${scannerId.manifest}`,
-            alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
-            severity: FindingSeverity.High,
-            type: FindingType.Info,
-            metadata: {
-              scannerId: scannerId.manifest,
-              slaValue: scannerSlaAvgValue,
-            },
-          })
+      try {
+        const scannerSlaData = await axios.default.get(
+          "https://api.forta.network/stats/sla/scanner/" + scannerAddress
         );
-      }
-    } catch (e) {
-      console.log(e.message);
-    }
-  }
-  return findings;
-};
 
+        const scannerSlaAvgValue = scannerSlaData.data.statistics.avg;
+
+        if (scannerSlaAvgValue < config.SLA_THRESHOLD) {
+          findings.push(
+            Finding.fromObject({
+              name: "Scanner SLA under threshold",
+              description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${s}`,
+              alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
+              severity: FindingSeverity.High,
+              type: FindingType.Info,
+              metadata: {
+                scannerId: s,
+                slaValue: scannerSlaAvgValue,
+              },
+            })
+          );
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    }
+    return findings;
+  };
+}
 module.exports = {
+  initialize,
   handleTransaction: provideHandleTransaction(scannersLoaded),
-  handleBlock,
+  handleBlock: provideHandleBlock(scannersLoaded),
+  provideHandleBlock,
+  provideHandleTransaction,
 };
