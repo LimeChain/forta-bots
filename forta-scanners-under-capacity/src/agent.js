@@ -5,7 +5,7 @@ const {
   ethers,
   getEthersProvider,
 } = require("forta-agent");
-const fs = require("fs");
+
 const { Contract, Provider } = require("ethers-multicall");
 const { config } = require("./agent.config");
 const ADDRESS_ZERO = ethers.constants.AddressZero;
@@ -29,6 +29,7 @@ const scannerRegistryContract = new Contract(contractAddresses[2], scannerAbi);
 
 let scannersLoaded = [];
 const scannersCountByChainId = [];
+const scannersLoadedWithChainId = [];
 
 async function initialize() {
   await ethcallProvider.init();
@@ -109,11 +110,14 @@ async function initialize() {
   });
 
   //Add the chainId for each scanner
-  const scannersLoadedWithChainId = [];
-  for (let s of scannersLoaded) {
-    const scannerChainIdCall = scannerRegistryContract.getScannerChainId(s);
-    const [scannerChainId] = await ethcallProvider.all([scannerChainIdCall]);
+  const scannerChainIdCalls = [];
+  scannersLoaded.forEach((s) => {
+    scannerChainIdCalls.push(scannerRegistryContract.getScannerChainId(s));
+  });
+  const scannerChainIds = await ethcallProvider.all(scannerChainIdCalls);
 
+  for (let [i, s] of scannersLoaded.entries()) {
+    const scannerChainId = scannerChainIds[i];
     const scannerChainIdNormalized = scannerChainId.toNumber();
     scannersLoadedWithChainId.push({
       scannerId: s,
@@ -130,7 +134,6 @@ async function initialize() {
     ).length;
   }
   scannersCountByChainId.push(scannersByChainCount);
-  scannersLoaded = scannersLoadedWithChainId;
 }
 
 //Here we check if a new scanner is minted so we can add it to the array of scanners
@@ -159,19 +162,6 @@ function provideHandleTransaction(
           scannerId: tokenIdString,
           chainId: scannerChainIdNormalized,
         });
-        findings.push(
-          Finding.fromObject({
-            name: "FORTA Scanner minted",
-            description: `FORTA Scanner minted with scannerId: ${tokenIdString}`,
-            alertId: "FORTA-SCANNER-MINTED",
-            severity: FindingSeverity.Info,
-            type: FindingType.Info,
-            metadata: {
-              scannerId: tokenIdString,
-              chainId: scannerChainIdNormalized,
-            },
-          })
-        );
       }
     }
 
@@ -187,18 +177,21 @@ function provideHandleBlock(
 ) {
   return async function handleBlock(blockNumber) {
     const findings = [];
+    const scannerCapacityCalls = [];
+    scannersLoaded.forEach((s) => {
+      scannerCapacityCalls.push(dispatcherContract.numAgentsFor(s.scannerId));
+    });
+    const scannersCapacities = await ethcallProvider.all(scannerCapacityCalls);
+
     for (let id of config.chainIds) {
       let scannerCapacityForChainId = 0;
-      for (let s of scannersLoaded) {
+
+      for (let [i, s] of scannersLoaded.entries()) {
         if (s.chainId != id) continue;
-        const scannerCapacityCall = dispatcherContract.numAgentsFor(
-          s.scannerId
-        );
-        const [scannerCapacity] = await ethcallProvider.all([
-          scannerCapacityCall,
-        ]);
-        const scannerCapacityPercentage =
-          (scannerCapacity.toNumber() / 25) * 100;
+
+        const scannerCapacity = scannersCapacities[i].toNumber();
+
+        const scannerCapacityPercentage = (scannerCapacity / 25) * 100;
         scannerCapacityForChainId += scannerCapacityPercentage;
       }
 
@@ -248,12 +241,12 @@ function provideHandleBlock(
 module.exports = {
   initialize,
   handleTransaction: provideHandleTransaction(
-    scannersLoaded,
+    scannersLoadedWithChainId,
     scannersCountByChainId,
     ethcallProvider
   ),
   handleBlock: provideHandleBlock(
-    scannersLoaded,
+    scannersLoadedWithChainId,
     scannersCountByChainId,
     ethcallProvider
   ),
