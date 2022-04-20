@@ -1,7 +1,7 @@
 {
-  "name": "forta-emitting-upgraded",
+  "name": "forta-mint-mainnet",
   "version": "0.0.1",
-  "description": "This agent detects if an upgrade event occurs on a set of contracts on either polygon mainnet or ethereum mainnet",
+  "description": "This agent detects mints for the FORTA token on Ethereum Mainnet",
   "chainIds": [
     1,
     137
