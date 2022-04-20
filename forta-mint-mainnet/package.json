@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "description": "This agent detects mints for the FORTA token on Ethereum Mainnet",
   "chainIds": [
-    1,
-    137
+    1
   ],
   "repository": {
     "url": "https://github.com/LimeChain/forta-bots"
