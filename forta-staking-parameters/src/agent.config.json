@@ -1,0 +1,7 @@
+{
+  "abi": [
+    "event FortaStakingChanged(address staking)",
+    "event StakeSubjectHandlerChanged(address newHandler, address oldHandler)"
+  ],
+  "contract": "0x587969Add789c13F64Bcc34Ff253BD9BFB78f38a"
+}
