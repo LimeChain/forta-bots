@@ -1,0 +1,4 @@
+{
+  "abi": "event ScannerNodeVersionUpdated(string newVersion, string oldVersion)",
+  "contract": "0x4720c872425876B6f4b4E9130CDef667aDE553b2"
+}
