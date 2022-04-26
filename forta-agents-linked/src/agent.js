@@ -1,35 +1,51 @@
-const { Finding, FindingSeverity, FindingType } = require("forta-agent");
-const { contractAddress, eventABI } = require("./agent.config.json");
+const {
+  Finding,
+  FindingSeverity,
+  FindingType,
+  ethers,
+} = require("forta-agent");
+const {
+  contractAddress,
+  eventABI,
+  timeThreshold,
+} = require("./agent.config.json");
 
-const handleTransaction = async (txEvent) => {
-  const findings = [];
-  const filtered = txEvent.filterLog(eventABI, contractAddress);
-  filtered.forEach((tx) => {
-    const { agentId, scannerId, enable } = tx.args;
-    if (enable) {
-      const agentAddress = agentId.toHexString();
-      const scannerAddress = scannerId.toHexString();
+const TimeHandler = require("./TimeHandler");
 
-      findings.push(
-        Finding.fromObject({
-          name: "Forta Agent Assigned ",
-          description: `Forta Agent Assigned: agentAddress: ${agentAddress}`,
-          alertId: "FORTA-AGENT-ASSIGNED",
-          severity: FindingSeverity.Low,
-          type: FindingType.Info,
-          metadata: {
-            agentAddress,
-            scannerAddress,
-            enable,
-          },
-        })
-      );
+const timeHandler = new TimeHandler(timeThreshold);
+
+function provideHandleTransaction(timeHandler) {
+  return async function handleTransaction(txEvent) {
+    const findings = [];
+    const filtered = txEvent.filterLog(eventABI, contractAddress);
+    filtered.forEach((tx) => {
+      timeHandler.addToList(tx.args.agentId);
+    });
+
+    const aboveThreshold = timeHandler.checkIfPassedThreshold();
+    if (aboveThreshold.length > 0) {
+      aboveThreshold.forEach((address) => {
+        const addressAsHex = ethers.BigNumber.from(address).toHexString();
+        findings.push(
+          Finding.fromObject({
+            name: "Forta Agent Assigned ",
+            description: `Forta Agent Assigned: agentAddress: ${addressAsHex}`,
+            alertId: "FORTA-AGENT-ASSIGNED",
+            severity: FindingSeverity.Low,
+            type: FindingType.Info,
+            metadata: {
+              agentAddress: addressAsHex,
+            },
+          })
+        );
+      });
+      timeHandler.reset();
     }
-  });
-
-  return findings;
-};
+    return findings;
+  };
+}
 
 module.exports = {
-  handleTransaction,
+  handleTransaction: provideHandleTransaction(timeHandler),
+  provideHandleTransaction,
 };
