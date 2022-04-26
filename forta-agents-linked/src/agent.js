@@ -29,7 +29,9 @@ function provideHandleTransaction(timeHandler) {
         findings.push(
           Finding.fromObject({
             name: "Forta Agent Assigned ",
-            description: `Forta Agent Assigned: agentAddress: ${addressAsHex}`,
+            description: `Forta Agent Assigned: agentAddress: ${addressAsHex} in the past ${
+              timeThreshold / 60
+            } minutes`,
             alertId: "FORTA-AGENT-ASSIGNED",
             severity: FindingSeverity.Low,
             type: FindingType.Info,

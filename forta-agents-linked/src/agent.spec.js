@@ -49,7 +49,7 @@ describe("Agents assigned", () => {
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: "Forta Agent Assigned ",
-          description: `Forta Agent Assigned: agentAddress: 0x0abc`,
+          description: `Forta Agent Assigned: agentAddress: 0x0abc in the past 5 minutes`,
           alertId: "FORTA-AGENT-ASSIGNED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
