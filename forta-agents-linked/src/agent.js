@@ -28,15 +28,15 @@ function provideHandleTransaction(timeHandler) {
         const addressAsHex = ethers.BigNumber.from(address).toHexString();
         findings.push(
           Finding.fromObject({
-            name: "Forta Agent Assigned ",
-            description: `Forta Agent Assigned: agentAddress: ${addressAsHex} in the past ${
+            name: "Forta Bot Assigned ",
+            description: `Forta Bot Assigned: botAddress: ${addressAsHex} in the past ${
               timeThreshold / 60
             } minutes`,
-            alertId: "FORTA-AGENT-ASSIGNED",
+            alertId: "FORTA-BOT-ASSIGNED",
             severity: FindingSeverity.Low,
             type: FindingType.Info,
             metadata: {
-              agentAddress: addressAsHex,
+              botAddress: addressAsHex,
             },
           })
         );

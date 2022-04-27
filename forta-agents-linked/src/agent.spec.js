@@ -7,7 +7,7 @@ const {
 } = require("forta-agent");
 const { provideHandleTransaction } = require("./agent");
 
-describe("Agents assigned", () => {
+describe("Bots assigned", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
@@ -21,7 +21,7 @@ describe("Agents assigned", () => {
       mockTxEvent.filterLog.mockReset();
     });
 
-    it("returns empty findings if there are no agent assignments", async () => {
+    it("returns empty findings if there are no bot assignments", async () => {
       mockTimeHandler.checkIfPassedThreshold.mockReturnValueOnce([]);
       mockTxEvent.filterLog.mockReturnValue([]);
 
@@ -34,7 +34,7 @@ describe("Agents assigned", () => {
       expect(mockTimeHandler.reset).toHaveBeenCalledTimes(0);
     });
 
-    it("returns a finding if there was an agent assignment", async () => {
+    it("returns a finding if there was a bot assignment", async () => {
       const mockAgentEvent = {
         args: {
           agentId: ethers.BigNumber.from("0xabc"),
@@ -48,13 +48,13 @@ describe("Agents assigned", () => {
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "Forta Agent Assigned ",
-          description: `Forta Agent Assigned: agentAddress: 0x0abc in the past 5 minutes`,
-          alertId: "FORTA-AGENT-ASSIGNED",
+          name: "Forta Bot Assigned ",
+          description: `Forta Bot Assigned: botAddress: 0x0abc in the past 5 minutes`,
+          alertId: "FORTA-BOT-ASSIGNED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {
-            agentAddress: "0x0abc",
+            botAddress: "0x0abc",
           },
         }),
       ]);
