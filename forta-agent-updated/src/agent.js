@@ -18,8 +18,8 @@ const handleTransaction = async (txEvent) => {
     findings.push(
       Finding.fromObject({
         name: "Forta Agent Updated",
-        description: `Agent Updated with AgentId: ${agentIdNormalised}`,
-        alertId: "FORTA-AGENT-UPDATED",
+        description: `Bot Updated with AgentId: ${agentIdNormalised}`,
+        alertId: "FORTA-BOT-UPDATED",
         severity: FindingSeverity.Low,
         type: FindingType.Info,
         metadata: {

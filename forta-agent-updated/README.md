@@ -2,7 +2,7 @@
 
 ## Description
 
-This agent detects transactions with Agent Updated events
+This bot detects transactions with Agent Updated events
 
 ## Supported Chains
 
