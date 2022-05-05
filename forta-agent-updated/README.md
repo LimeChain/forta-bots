@@ -1,4 +1,4 @@
-# Forta Agent Updated
+# Forta Bot Updated
 
 ## Description
 
@@ -12,7 +12,7 @@ This bot detects transactions with Agent Updated events
 
 Describe each of the type of alerts fired by this agent
 
-- FORTA-AGENT-UPDATED
+- FORTA-BOT-UPDATED
   - Fired when a transaction contains an Agent Updated event
   - Severity is always set to "low"
   - Type is always set to "info"

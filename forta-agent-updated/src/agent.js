@@ -17,7 +17,7 @@ const handleTransaction = async (txEvent) => {
     const agentIdNormalised = ethers.BigNumber.from(agentId).toHexString();
     findings.push(
       Finding.fromObject({
-        name: "Forta Agent Updated",
+        name: "Forta Bot Updated",
         description: `Bot Updated with AgentId: ${agentIdNormalised}`,
         alertId: "FORTA-BOT-UPDATED",
         severity: FindingSeverity.Low,

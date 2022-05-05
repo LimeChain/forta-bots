@@ -1,5 +1,5 @@
 {
-  "name": "forta-agent-updated",
+  "name": "forta-bot-updated",
   "version": "0.0.1",
   "description": "This bot detects transactions with Agent Updated events",
   "chainIds": [
