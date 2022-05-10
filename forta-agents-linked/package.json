@@ -1,7 +1,7 @@
 {
   "name": "forta-bot-assigned",
   "version": "0.0.1",
-  "description": "Detects if a FORTA Bot has been assigned",
+  "description": "Detects if a FORTA Bot has been linked over 5 minutes after being updated",
   "chainIds": [
     137
   ],

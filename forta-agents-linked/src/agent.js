@@ -18,11 +18,17 @@ function provideHandleTransaction(timeHandler) {
   return async function handleTransaction(txEvent) {
     const findings = [];
     const filtered = txEvent.filterLog(eventABI, contractAddress);
+    let aboveThreshold = [];
     filtered.forEach((tx) => {
-      timeHandler.addToList(tx.args.agentId);
+      const { name } = tx;
+      if (name == "AgentUpdated") {
+        timeHandler.addToListUpdated(tx.args.agentId);
+      } else if (name == "Link") {
+        timeHandler.addToListLinked(tx.args.agentId);
+        aboveThreshold = timeHandler.checkIfPassedThreshold();
+      }
     });
 
-    const aboveThreshold = timeHandler.checkIfPassedThreshold();
     if (aboveThreshold.length > 0) {
       aboveThreshold.forEach((address) => {
         const addressAsHex = ethers.BigNumber.from(address).toHexString();

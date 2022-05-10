@@ -2,7 +2,7 @@
 
 ## Description
 
-Detects if a FORTA Bot has been assigned in a predefined threshold
+Detects if a FORTA Bot has been linked over 5 minutes after being updated
 
 ## Supported Chains
 
@@ -19,6 +19,4 @@ Detects if a FORTA Bot has been assigned in a predefined threshold
 
 ## Test Data
 
-The Bot behaviour can be verified with the following block range, but first you need to set the threshold to -1:
-
-- 27574226..27574230 (Bot assigned, polygon)
+The Bot behaviour can be verified with the provided unit tests

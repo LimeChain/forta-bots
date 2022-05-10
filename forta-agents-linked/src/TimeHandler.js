@@ -8,21 +8,28 @@ Logic:
 class TimeHandler {
   constructor(threshold) {
     this.threshold = threshold;
-    this.agentAddresses = {};
+    this.agentUpdated = {};
+    this.agentLinked = {};
     this.findings = [];
   }
 
-  addToList(address) {
-    this.agentAddresses[address] = Math.floor(new Date().getTime() / 1000);
+  addToListUpdated(address) {
+    this.agentUpdated[address] = Math.floor(new Date().getTime() / 1000);
+  }
+
+  addToListLinked(address) {
+    this.agentLinked[address] = Math.floor(new Date().getTime() / 1000);
   }
 
   checkIfPassedThreshold() {
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
-    for (const address in this.agentAddresses) {
-      if (currentTime - this.agentAddresses[address] > this.threshold) {
+    for (const address in this.agentLinked) {
+      if (
+        this.agentLinked[address] - this.agentUpdated[address] >
+        this.threshold
+      ) {
         this.findings.push(address);
-        delete this.agentAddresses[address];
+        delete this.agentUpdated[address];
+        delete this.agentLinked[address];
       }
     }
     return this.findings;
