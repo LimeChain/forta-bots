@@ -30,7 +30,7 @@ const handleTransaction = async (txEvent) => {
     const { agentId, by, metadata, chainIds } = tx.args;
     const { from, tokenId } = tx.args;
 
-    if (from && from == ADDRESS_ZERO) {
+    if (from == ADDRESS_ZERO) {
       const agentIdNormalised = ethers.BigNumber.from(tokenId).toHexString();
       findings.push(
         Finding.fromObject({
