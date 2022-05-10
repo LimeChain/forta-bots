@@ -11,7 +11,7 @@ describe("forta agent updated", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
-
+    const ADDRESS_ZERO = ethers.constants.AddressZero;
     beforeEach(() => {
       mockTxEvent.filterLog.mockReset();
     });
@@ -30,6 +30,7 @@ describe("forta agent updated", () => {
           agentId: ethers.BigNumber.from(1234),
           by: "0xdef",
           metadata: "RANDOM METADATA STRING",
+          chainIds: [ethers.BigNumber.from(1), ethers.BigNumber.from(56)],
         },
       };
       mockTxEvent.filterLog.mockReturnValue([mockAgentUpdatedEvent]);
@@ -43,10 +44,63 @@ describe("forta agent updated", () => {
           alertId: "FORTA-BOT-UPDATED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             agentId: "0x04d2",
             by: "0xdef",
             metadata: "RANDOM METADATA STRING",
+            chainIds: ["Ethereum", "Binance Smart Chain"],
+          },
+        }),
+      ]);
+    });
+
+    it("returns a finding if there is a agent created event", async () => {
+      const mockAgentUpdatedEvent = {
+        args: {
+          agentId: ethers.BigNumber.from(1234),
+          by: "0xdef",
+          metadata: "RANDOM METADATA STRING",
+          chainIds: [ethers.BigNumber.from(1), ethers.BigNumber.from(56)],
+        },
+      };
+      const mockTransferEvent = {
+        args: {
+          from: ADDRESS_ZERO,
+          tokenId: ethers.BigNumber.from(123),
+        },
+      };
+      mockTxEvent.filterLog.mockReturnValue([
+        mockTransferEvent,
+        mockAgentUpdatedEvent,
+      ]);
+
+      const findings = await handleTransaction(mockTxEvent);
+
+      expect(findings).toStrictEqual([
+        Finding.fromObject({
+          name: "Forta Bot Created",
+          description: `Bot Created with AgentId: 0x7b`,
+          alertId: "FORTA-BOT-CREATED",
+          severity: FindingSeverity.Low,
+          type: FindingType.Info,
+          protocol: "forta",
+          metadata: {
+            agentId: "0x7b",
+          },
+        }),
+        Finding.fromObject({
+          name: "Forta Bot Updated",
+          description: `Bot Updated with AgentId: 0x04d2`,
+          alertId: "FORTA-BOT-UPDATED",
+          severity: FindingSeverity.Low,
+          type: FindingType.Info,
+          protocol: "forta",
+          metadata: {
+            agentId: "0x04d2",
+            by: "0xdef",
+            metadata: "RANDOM METADATA STRING",
+            chainIds: ["Ethereum", "Binance Smart Chain"],
           },
         }),
       ]);
