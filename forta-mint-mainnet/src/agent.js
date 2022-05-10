@@ -13,6 +13,8 @@ function provideHandleTransaction() {
     const filteredTxEvent = txEvent.filterLog(event, contractAddress);
 
     filteredTxEvent.forEach((tx) => {
+      const { from } = tx;
+      const fromLowercase = from.toLowerCase();
       if (tx.args.from === ADDRESS_ZERO) {
         const valueMinted = ethers.utils.formatEther(tx.args.value);
         //if it is a mint transaction we report it
@@ -26,6 +28,7 @@ function provideHandleTransaction() {
             metadata: {
               to: tx.args.to,
               value: valueMinted,
+              mintedBy: fromLowercase,
             },
           })
         );
