@@ -35,6 +35,12 @@ class TimeHandler {
         this.findings.push(address);
         delete this.agentUpdated[address];
         delete this.agentLinked[address];
+      } else if (
+        this.agentLinked[address] - this.agentUpdated[address] <
+        this.threshold
+      ) {
+        delete this.agentUpdated[address];
+        delete this.agentLinked[address];
       }
     }
     return this.findings;
