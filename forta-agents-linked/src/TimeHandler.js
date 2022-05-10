@@ -23,6 +23,9 @@ class TimeHandler {
 
   checkIfPassedThreshold() {
     for (const address in this.agentLinked) {
+      if (!this.agentUpdated[address]) {
+        continue;
+      }
       if (
         this.agentLinked[address] - this.agentUpdated[address] >
         this.threshold
