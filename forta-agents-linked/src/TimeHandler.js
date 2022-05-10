@@ -23,7 +23,9 @@ class TimeHandler {
 
   checkIfPassedThreshold() {
     for (const address in this.agentLinked) {
+      //If we have no track of when the agent was updated but we do have the link event, we must delete it and skip the rest of the code execution since (optimisation patch)
       if (!this.agentUpdated[address]) {
+        delete this.agentLinked[address];
         continue;
       }
       if (
