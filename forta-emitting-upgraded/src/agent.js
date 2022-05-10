@@ -33,6 +33,7 @@ function provideHandleTransaction(getContracts) {
     );
 
     txFiltered.forEach((tx) => {
+      const { implementation } = tx.args;
       const contact = contracts.filter(
         (ct) => ct.address.toLowerCase() == tx.address.toLowerCase()
       )[0];
@@ -43,9 +44,12 @@ function provideHandleTransaction(getContracts) {
           alertId: "FORTA-EMIT-UPGRADED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             name: contact.name,
             address: contact.address,
+            chainId: currentChainId,
+            implementation,
           },
         })
       );

@@ -1,7 +1,7 @@
 {
   "name": "forta-emitting-upgraded",
   "version": "0.0.1",
-  "description": "Forta Agent Javascript starter project",
+  "description": "This bot detects if an upgrade event occurs on a set of contracts on either polygon mainnet or ethereum mainnet",
   "chainIds": [
     1,
     137

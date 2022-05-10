@@ -29,13 +29,13 @@ describe("FORTA Contracts Upgraded", () => {
     });
 
     it("returns a finding if there is a Upgraded event called", async () => {
-      const mockTetherTransferEvent = {
+      const mockUpgradedEvent = {
         address: "0x123",
         args: {
-          address: mockContractObject.address,
+          implementation: "0x123",
         },
       };
-      mockTxEvent.filterLog.mockReturnValue([mockTetherTransferEvent]);
+      mockTxEvent.filterLog.mockReturnValue([mockUpgradedEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
@@ -46,9 +46,12 @@ describe("FORTA Contracts Upgraded", () => {
           alertId: "FORTA-EMIT-UPGRADED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             name: mockContractObject.name,
             address: mockContractObject.address,
+            chainId: 1,
+            implementation: mockUpgradedEvent.args.implementation,
           },
         }),
       ]);
