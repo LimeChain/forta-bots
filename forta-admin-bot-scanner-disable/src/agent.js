@@ -32,6 +32,7 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
     txFiltered.forEach((tx) => {
       const { permission, value, scannerId, agentId } = tx.args;
       const { address } = tx;
+      const caller = txEvent.from;
 
       const contractAddressesFlattened = contractAddresses.map((e) =>
         e.toLowerCase()
@@ -42,41 +43,46 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
 
       if (scannerId) {
         if (value == false) {
-          const scannerIdAddress = ethers.BigNumber.from(scannerId).toString();
+          const scannerIdAddress =
+            ethers.BigNumber.from(scannerId).toHexString();
           const disabledBy = PermissionsScanner[permission];
-          findings.push(
-            Finding.fromObject({
-              name: "Forta scanner disabled",
-              description: `Forta scanner disabled, ScannerId: ${scannerIdAddress}`,
-              alertId: "FORTA-SCANNER-DISABLED",
-              severity: FindingSeverity.Medium,
-              type: FindingType.Info,
-              metadata: {
-                disabledBy,
-                scannerId: scannerIdAddress,
-                contractName,
-              },
-            })
-          );
+          if (disabledBy == "ADMIN")
+            findings.push(
+              Finding.fromObject({
+                name: "Forta scanner disabled",
+                description: `Forta scanner disabled, ScannerId: ${scannerIdAddress}`,
+                alertId: "FORTA-SCANNER-DISABLED",
+                severity: FindingSeverity.Medium,
+                type: FindingType.Info,
+                protocol: "forta",
+                metadata: {
+                  disabledBy: { role: disabledBy, by: caller },
+                  scannerId: scannerIdAddress,
+                  contractName,
+                },
+              })
+            );
         }
       } else if (agentId) {
         if (value == false) {
-          const agentIdAddress = ethers.BigNumber.from(agentId).toString();
+          const agentIdAddress = ethers.BigNumber.from(agentId).toHexString();
           const disabledBy = PermissionsBot[permission];
-          findings.push(
-            Finding.fromObject({
-              name: "Forta Agent disabled",
-              description: `Forta Agent disabled, agentId: ${agentIdAddress}`,
-              alertId: "FORTA-AGENT-DISABLED",
-              severity: FindingSeverity.Medium,
-              type: FindingType.Info,
-              metadata: {
-                disabledBy,
-                agentId: agentIdAddress,
-                contractName,
-              },
-            })
-          );
+          if (disabledBy == "ADMIN")
+            findings.push(
+              Finding.fromObject({
+                name: "Forta Bot disabled",
+                description: `Forta Bot disabled, agentId: ${agentIdAddress}`,
+                alertId: "FORTA-BOT-DISABLED",
+                severity: FindingSeverity.Medium,
+                type: FindingType.Info,
+                protocol: "forta",
+                metadata: {
+                  disabledBy: { role: disabledBy, by: caller },
+                  agentId: agentIdAddress,
+                  contractName,
+                },
+              })
+            );
         }
       }
     });
