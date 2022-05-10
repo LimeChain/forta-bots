@@ -51,6 +51,7 @@ describe("FORTA MINT BOT", () => {
           alertId: "FORTA-MINT-MAINNET",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             to: mockMintTxEvent.args.to,
             value: mintValue,

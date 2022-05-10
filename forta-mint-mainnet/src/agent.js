@@ -25,6 +25,7 @@ function provideHandleTransaction() {
             alertId: "FORTA-MINT-MAINNET",
             severity: FindingSeverity.Low,
             type: FindingType.Info,
+            protocol: "forta",
             metadata: {
               to: tx.args.to,
               value: valueMinted,
