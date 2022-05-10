@@ -47,6 +47,8 @@ class TimeHandler {
   }
 
   reset() {
+    this.agentLinked = {};
+    this.agentUpdated = {};
     this.findings = [];
   }
 }
