@@ -29,6 +29,7 @@ function handleBotStakeThresholdChanges(
           alertId: "FORTA-STAKING-THRESHOLD-CHANGED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             min: minNormalized,
             max: maxNormalized,

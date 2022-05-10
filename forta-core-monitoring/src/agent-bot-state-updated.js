@@ -35,8 +35,8 @@ function handleBotStateChanges(txEvent, abi, contractAddresses, contractNames) {
     const contractName = contractNames[contractIndex];
 
     if (agentId) {
-      const agentIdAddress = ethers.BigNumber.from(agentId).toString();
-      const disabledBy = PermissionsBot[permission];
+      const agentIdAddress = ethers.BigNumber.from(agentId).toHexString();
+      const updatedBy = PermissionsBot[permission];
       findings.push(
         Finding.fromObject({
           name: "Forta bot state updated",
@@ -44,28 +44,30 @@ function handleBotStateChanges(txEvent, abi, contractAddresses, contractNames) {
           alertId: "FORTA-BOT-STATE-CHANGED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             agentId: agentIdAddress,
             contractName,
-            disabledBy,
+            updatedBy,
             currentState: value ? "Enabled" : "Disabled",
           },
         })
       );
     } else if (scannerId) {
-      const scannerIdAddress = ethers.BigNumber.from(scannerId).toString();
-      const disabledBy = PermissionsScanner[permission];
+      const scannerIdAddress = ethers.BigNumber.from(scannerId).toHexString();
+      const updatedBy = PermissionsScanner[permission];
       findings.push(
         Finding.fromObject({
           name: "Forta scanner state updated",
           description: `Forta scanner state updated with scannerId: ${scannerIdAddress}`,
           alertId: "FORTA-SCANNER-STATE-CHANGED",
           severity: FindingSeverity.Low,
+          protocol: "forta",
           type: FindingType.Info,
           metadata: {
             scannerId: scannerIdAddress,
             contractName,
-            disabledBy,
+            updatedBy,
             currentState: value ? "Enabled" : "Disabled",
           },
         })

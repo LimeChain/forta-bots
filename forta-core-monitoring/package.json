@@ -1,7 +1,7 @@
 {
   "name": "forta-core-monitoring",
   "version": "0.0.1",
-  "description": "This agent detects multiple kinds of events for monitoring",
+  "description": "This bot detects multiple kinds of events for monitoring",
   "chainIds": [
     137
   ],

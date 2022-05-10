@@ -6,7 +6,7 @@ const {
 } = require("forta-agent");
 
 const { abi, contracts } = require("./agent.config.json");
-const { mintAgent } = require("./agent-bot-minted");
+
 const { stakingChange } = require("./agent-bot-stake-threshold-changed");
 const { mintScanner } = require("./agent-scanner-minted");
 const { stateAgent } = require("./agent-bot-state-updated");
@@ -23,14 +23,6 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
     let findings = [];
     const contractAddresses = getContractAddresses();
     const contractNames = getContractNames();
-
-    //Here we listen for the transfer event only on the Agent registry to determine if a new agent(bot) is minted
-    const mintFindings = mintAgent(
-      txEvent,
-      abi[0],
-      contractAddresses[0],
-      contractNames
-    );
 
     //This handles the staking change findings on any of the contracts available
     const stakingChangeFindings = stakingChange(
@@ -56,7 +48,6 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
     );
 
     findings = [
-      ...mintFindings,
       ...stakingChangeFindings,
       ...mintScannerFindings,
       ...botStateUpdatedFindings,
