@@ -1,11 +1,11 @@
-const { getEthersProvider } = require('forta-agent');
+const { getEthersProvider } = require("forta-agent");
 const {
   EVENT_SIGNATURES,
   getAddressAndNetworkByChainId,
   createRoleGrantedAlert,
   createRoleRevokedAlert,
   createAdminRoleChangedAlert,
-} = require('./agent.config');
+} = require("./agent.config");
 
 // Set the FORT contract address based on the chainId
 let contractAddress;
@@ -26,40 +26,32 @@ const handleTransaction = async (txEvent) => {
     const { name } = event;
 
     switch (name) {
-      case 'RoleGranted': {
+      case "RoleGranted": {
         const { role, account, sender } = event.args;
-        findings.push(createRoleGrantedAlert(
-          role,
-          account,
-          sender,
-          network,
-        ));
+        findings.push(createRoleGrantedAlert(role, account, sender, network));
         break;
       }
-      case 'RoleRevoked': {
+      case "RoleRevoked": {
         const { role, account, sender } = event.args;
-        findings.push(createRoleRevokedAlert(
-          role,
-          account,
-          sender,
-          network,
-        ));
+        findings.push(createRoleRevokedAlert(role, account, sender, network));
         break;
       }
-      case 'RoleAdminChanged': {
+      case "RoleAdminChanged": {
         const { role, previousAdminRole, newAdminRole } = event.args;
-        findings.push(createAdminRoleChangedAlert(
-          role,
-          previousAdminRole,
-          newAdminRole,
-          network,
-        ));
+        findings.push(
+          createAdminRoleChangedAlert(
+            role,
+            previousAdminRole,
+            newAdminRole,
+            network
+          )
+        );
         break;
       }
       // no default
     }
   });
-
+  console.log(findings);
   return findings;
 };
 
