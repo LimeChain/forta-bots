@@ -11,7 +11,7 @@ describe("FORTA Scanner Node Version Updated", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
-
+    mockTxEvent.transaction = { from: "0xAbC" };
     beforeEach(() => {
       mockTxEvent.filterLog.mockReset();
     });

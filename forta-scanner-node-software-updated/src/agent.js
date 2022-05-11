@@ -5,9 +5,8 @@ const handleTransaction = async (txEvent) => {
   const findings = [];
 
   const txFiltered = txEvent.filterLog(abi, contract);
-
+  const from = txEvent.from;
   txFiltered.forEach((tx) => {
-    const { from } = tx;
     const { oldVersion, newVersion } = tx.args;
     const fromLowerCase = from.toLowerCase();
     findings.push(
