@@ -18,7 +18,7 @@ const event = {
 describe("routing updated bot", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = {
-      from: "0xAbC",
+      from: "0xabc",
       filterLog: jest.fn(),
     };
 

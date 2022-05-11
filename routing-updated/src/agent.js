@@ -9,9 +9,9 @@ const handleTransaction = async (txEvent) => {
 
   const events = txEvent.filterLog(EVENT_SIGNATURE, ROUTER_ADDRESS);
   const from = txEvent.from;
-  const fromToLowerCase = from.toLowerCase();
+
   events.forEach((event) => {
-    findings.push(createAlert(event.args, fromToLowerCase));
+    findings.push(createAlert(event.args, from));
   });
 
   return findings;
