@@ -92,7 +92,7 @@ describe("whitelist disabled bot", () => {
     // Call initialize to set the network
     let network;
     const mockTxEvent = {
-      from: "0xAbC",
+      from: "0xabc",
       filterFunction: jest.fn(),
     };
     beforeAll(async () => {

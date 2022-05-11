@@ -26,7 +26,7 @@ const handleTransaction = async (txEvent) => {
     const from = txEvent.from;
 
     for (let tx of filtered) {
-      findings.push(createAlert(network, from.toLowerCase()));
+      findings.push(createAlert(network, from));
       wasDisabled = true;
     }
   }
