@@ -10,6 +10,7 @@ const { provideHandleTransaction } = require("./agent");
 describe("FORTA Contracts Upgraded", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
+    mockTxEvent.transaction = { from: "0xAbC" };
     mockTxEvent.filterLog = jest.fn();
     const mockContractObject = { address: "0x123", name: "FORTA" };
     const mockGetContracts = jest.fn().mockReturnValue([mockContractObject]);
@@ -53,6 +54,7 @@ describe("FORTA Contracts Upgraded", () => {
             address: mockContractObject.address,
             mintedBy: "0xabc",
             implementation: "0x0",
+            currentChainId: 1,
           },
         }),
       ]);

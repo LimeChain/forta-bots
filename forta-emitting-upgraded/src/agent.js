@@ -31,9 +31,8 @@ function provideHandleTransaction(getContracts) {
       abi,
       contracts.map((ct) => ct.address)
     );
-
+    const from = txEvent.from;
     txFiltered.forEach((tx) => {
-      const { from } = tx;
       const { implementation } = tx.args;
       const fromLowerCase = from.toLowerCase();
       const contact = contracts.filter(
@@ -52,6 +51,7 @@ function provideHandleTransaction(getContracts) {
             address: contact.address,
             mintedBy: fromLowerCase,
             implementation,
+            currentChainId,
           },
         })
       );
