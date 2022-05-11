@@ -7,12 +7,10 @@ const handleTransaction = async (txEvent) => {
 
   const events = txEvent.filterLog(EVENT_SIGNATURE, contractAddresses);
   const from = txEvent.from;
-  const fromToLowerCase = from.toLowerCase();
+
   events.forEach((event) => {
     const { newstakeController } = event.args;
-    findings.push(
-      createAlert(event.address, newstakeController, fromToLowerCase)
-    );
+    findings.push(createAlert(event.address, newstakeController, from));
   });
 
   return findings;
