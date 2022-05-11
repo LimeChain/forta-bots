@@ -11,9 +11,8 @@ function provideHandleTransaction() {
     const findings = [];
 
     const filteredTxEvent = txEvent.filterLog(event, contractAddress);
-
+    const from = txEvent.from;
     filteredTxEvent.forEach((tx) => {
-      const { from } = tx;
       const fromToLower = from.toLowerCase();
       if (tx.args.from === ADDRESS_ZERO) {
         const valueMinted = ethers.utils.formatEther(tx.args.value);

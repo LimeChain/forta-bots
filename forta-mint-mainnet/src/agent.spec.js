@@ -10,6 +10,7 @@ const { event, contractAddress } = require("./agent.config.json");
 describe("FORTA MINT BOT", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
+    mockTxEvent.transaction = { from: "0xAbC" };
     mockTxEvent.filterLog = jest.fn();
 
     beforeEach(() => {
