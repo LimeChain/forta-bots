@@ -7,7 +7,7 @@
     137
   ],
   "repository": {
-    "url": "https://github.com/LimeChain/forta-agent-scripts"
+    "url": "https://github.com/LimeChain/forta-bots"
   },
   "scripts": {
     "start": "npm run start:dev",
