@@ -6,10 +6,8 @@ const handleTransaction = async (txEvent) => {
 
   // filter the transaction logs for abi defined events
   const txFiltered = txEvent.filterLog(abi, contract);
-
+  const from = txEvent.from;
   txFiltered.forEach((tx) => {
-    const from = txEvent.from;
-    const fromLowerCase = from.toLowerCase();
     const { oldHandler, newHandler, staking } = tx.args;
     if (oldHandler) {
       findings.push(
@@ -23,7 +21,7 @@ const handleTransaction = async (txEvent) => {
           metadata: {
             oldHandler,
             newHandler,
-            changedBy: fromLowerCase,
+            changedBy: from,
           },
         })
       );
@@ -38,7 +36,7 @@ const handleTransaction = async (txEvent) => {
           protocol: "forta",
           metadata: {
             staking,
-            changedBy: fromLowerCase,
+            changedBy: from,
           },
         })
       );

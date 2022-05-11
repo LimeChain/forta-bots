@@ -10,7 +10,7 @@ const { handleTransaction } = require("./agent");
 describe("Forta Staking Parameters emitted", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
-    mockTxEvent.transaction = { from: "0xAbC" };
+    mockTxEvent.transaction = { from: "0xabc" };
     mockTxEvent.filterLog = jest.fn();
 
     beforeEach(() => {
