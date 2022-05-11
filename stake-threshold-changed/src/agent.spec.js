@@ -37,7 +37,7 @@ const stakeThresholdChangedForAgentsEvent = {
 describe("stake threshold changed bot", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = {
-      from: "0xAbC",
+      from: "0xabc",
       filterLog: jest.fn(),
     };
 

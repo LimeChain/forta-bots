@@ -12,14 +12,14 @@ const handleTransaction = async (txEvent) => {
 
   const events = txEvent.filterLog(EVENT_SIGNATURES, contractAddresses);
   const from = txEvent.from;
-  const fromToLowerCase = from.toLowerCase();
+
   events.forEach((event) => {
     const { address } = event;
 
     if (contracts[address] === "Forta Scanners") {
-      findings.push(createScannersAlert(event.args, fromToLowerCase));
+      findings.push(createScannersAlert(event.args, from));
     } else {
-      findings.push(createAgentsAlert(event.args, fromToLowerCase));
+      findings.push(createAgentsAlert(event.args, from));
     }
   });
 
