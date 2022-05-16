@@ -49,6 +49,7 @@ describe("Forta AccessManagerUpdated and Forta Router updated ", () => {
           alertId: "FORTA-ROUTER-UPDATED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             name: "Agent Registry",
             router: "0x0",
@@ -77,6 +78,7 @@ describe("Forta AccessManagerUpdated and Forta Router updated ", () => {
           alertId: "FORTA-ACCESS-MANAGER-UPDATED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             name: "Agent Registry",
             newAddressManager: "0x0",

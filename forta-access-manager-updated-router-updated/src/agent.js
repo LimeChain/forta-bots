@@ -32,6 +32,7 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
             alertId: "FORTA-ROUTER-UPDATED",
             severity: FindingSeverity.Low,
             type: FindingType.Info,
+            protocol: "forta",
             metadata: {
               name: contractNames[indexOfContractAddress],
               router,
@@ -46,6 +47,7 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
             alertId: "FORTA-ACCESS-MANAGER-UPDATED",
             severity: FindingSeverity.Low,
             type: FindingType.Info,
+            protocol: "forta",
             metadata: {
               name: contractNames[indexOfContractAddress],
               newAddressManager,

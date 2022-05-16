@@ -2,7 +2,7 @@
 
 ## Description
 
-This agent detects AccessManagerUpdated/RouterUpdated events being emitted
+This bot detects AccessManagerUpdated/RouterUpdated events being emitted
 
 ## Supported Chains
 
@@ -29,6 +29,6 @@ This agent detects AccessManagerUpdated/RouterUpdated events being emitted
 
 ## Test Data
 
-The agent behaviour can be verified with the following transactions:
+The bot behaviour can be verified with the following transactions:
 
 - 0x39dd322c91e6e4953370d0e2a2932d309dc091bc584d38c5fa4ce424835ce527 (Contains both events in a single transaction, Polygon)

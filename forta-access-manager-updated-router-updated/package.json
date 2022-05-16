@@ -1,7 +1,7 @@
 {
   "name": "forta-access-manager-router-updated",
   "version": "0.0.1",
-  "description": "This agent detects AccessManagerUpdated/RouterUpdated events being emitted",
+  "description": "This bot detects AccessManagerUpdated/RouterUpdated events being emitted",
   "chainIds": [
     137
   ],
