@@ -6,7 +6,7 @@ const handleTransaction = async (txEvent) => {
 
   // filter the transaction logs for abi defined events
   const txFiltered = txEvent.filterLog(abi, contract);
-
+  const from = txEvent.from;
   txFiltered.forEach((tx) => {
     const { oldHandler, newHandler, staking } = tx.args;
     if (oldHandler) {
@@ -17,9 +17,11 @@ const handleTransaction = async (txEvent) => {
           alertId: `FORTA-STAKING-PARAMETERS-${tx.name.toUpperCase()}`,
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             oldHandler,
             newHandler,
+            changedBy: from,
           },
         })
       );
@@ -31,8 +33,10 @@ const handleTransaction = async (txEvent) => {
           alertId: `FORTA-STAKING-PARAMETERS-${tx.name.toUpperCase()}`,
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             staking,
+            changedBy: from,
           },
         })
       );

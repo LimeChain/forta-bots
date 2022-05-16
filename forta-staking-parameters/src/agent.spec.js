@@ -10,6 +10,7 @@ const { handleTransaction } = require("./agent");
 describe("Forta Staking Parameters emitted", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
+    mockTxEvent.transaction = { from: "0xabc" };
     mockTxEvent.filterLog = jest.fn();
 
     beforeEach(() => {
@@ -44,8 +45,10 @@ describe("Forta Staking Parameters emitted", () => {
           alertId: "FORTA-STAKING-PARAMETERS-FORTASTAKINGCHANGED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             staking: mockTxEventProps.staking,
+            changedBy: "0xabc",
           },
         }),
       ]);
@@ -72,9 +75,11 @@ describe("Forta Staking Parameters emitted", () => {
           alertId: `FORTA-STAKING-PARAMETERS-STAKESUBJECTHANDLERCHANGED`,
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             newHandler: mockTxEventProps.newHandler,
             oldHandler: mockTxEventProps.oldHandler,
+            changedBy: "0xabc",
           },
         }),
       ]);
