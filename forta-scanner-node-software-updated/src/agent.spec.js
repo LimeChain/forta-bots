@@ -11,7 +11,7 @@ describe("FORTA Scanner Node Version Updated", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
-
+    mockTxEvent.transaction = { from: "0xAbC" };
     beforeEach(() => {
       mockTxEvent.filterLog.mockReset();
     });
@@ -27,13 +27,14 @@ describe("FORTA Scanner Node Version Updated", () => {
 
     it("returns a finding if Scanner Node Version has been Updated", async () => {
       const mockEventData = { oldVersion: "QwEsD", newVersion: "QdEsQ" };
-      const mockTetherTransferEvent = {
+      const mockUpdatedEvent = {
+        from: "0xAbC",
         args: {
           oldVersion: mockEventData.oldVersion,
           newVersion: mockEventData.newVersion,
         },
       };
-      mockTxEvent.filterLog.mockReturnValue([mockTetherTransferEvent]);
+      mockTxEvent.filterLog.mockReturnValue([mockUpdatedEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
@@ -44,9 +45,11 @@ describe("FORTA Scanner Node Version Updated", () => {
           alertId: "FORTA-SCANNER-NODE-UPDATED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             oldVersion: mockEventData.oldVersion,
             newVersion: mockEventData.newVersion,
+            updatedBy: "0xabc",
           },
         }),
       ]);

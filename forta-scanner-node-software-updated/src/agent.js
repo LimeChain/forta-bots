@@ -5,10 +5,10 @@ const handleTransaction = async (txEvent) => {
   const findings = [];
 
   const txFiltered = txEvent.filterLog(abi, contract);
-
+  const from = txEvent.from;
   txFiltered.forEach((tx) => {
     const { oldVersion, newVersion } = tx.args;
-
+    const fromLowerCase = from.toLowerCase();
     findings.push(
       Finding.fromObject({
         name: "Scanner Node Version Updated",
@@ -16,9 +16,11 @@ const handleTransaction = async (txEvent) => {
         alertId: "FORTA-SCANNER-NODE-UPDATED",
         severity: FindingSeverity.Low,
         type: FindingType.Info,
+        protocol: "forta",
         metadata: {
           oldVersion,
           newVersion,
+          updatedBy: fromLowerCase,
         },
       })
     );
