@@ -2,7 +2,7 @@
 
 ## Description
 
-Detects if a FORTA Bot has been linked over 5 minutes after being updated
+Detects if a FORTA Bot has not been linked over 5 minutes after being created
 
 ## Supported Chains
 

@@ -23,7 +23,7 @@ function provideHandleTransaction(timeHandler) {
     filtered.forEach((tx) => {
       const { name } = tx;
       if (name == "Transfer") {
-        timeHandler.addToListUpdated(tx.args.agentId);
+        timeHandler.addToListCreated(tx.args.agentId);
       } else if (name == "Link") {
         timeHandler.addToListLinked(tx.args.agentId);
       }

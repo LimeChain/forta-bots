@@ -12,7 +12,7 @@ describe("Bots assigned", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
     const mockTimeHandler = {
-      addToListUpdated: jest.fn(),
+      addToListCreated: jest.fn(),
       addToListLinked: jest.fn(),
       checkIfPassedThreshold: jest.fn(),
       reset: jest.fn(),
@@ -30,7 +30,7 @@ describe("Bots assigned", () => {
       expect(findings).toStrictEqual([]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
       expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(1);
-      expect(mockTimeHandler.addToListUpdated).toHaveBeenCalledTimes(0);
+      expect(mockTimeHandler.addToListCreated).toHaveBeenCalledTimes(0);
       expect(mockTimeHandler.addToListLinked).toHaveBeenCalledTimes(0);
       expect(mockTimeHandler.reset).toHaveBeenCalledTimes(0);
     });
@@ -73,7 +73,7 @@ describe("Bots assigned", () => {
         }),
       ]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
-      expect(mockTimeHandler.addToListUpdated).toHaveBeenCalledTimes(1);
+      expect(mockTimeHandler.addToListCreated).toHaveBeenCalledTimes(1);
       expect(mockTimeHandler.addToListLinked).toHaveBeenCalledTimes(1);
       expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(2);
       expect(mockTimeHandler.reset).toHaveBeenCalledTimes(1);

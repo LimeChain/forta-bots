@@ -13,7 +13,7 @@ class TimeHandler {
     this.findings = [];
   }
 
-  addToListUpdated(address) {
+  addToListCreated(address) {
     this.agentCreated[address] = Math.floor(new Date().getTime() / 1000);
   }
 
