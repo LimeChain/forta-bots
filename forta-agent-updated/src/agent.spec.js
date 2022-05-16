@@ -49,13 +49,13 @@ describe("forta agent updated", () => {
             agentId: "0x04d2",
             by: "0xdef",
             metadata: "RANDOM METADATA STRING",
-            chainIds: ["Ethereum", "Binance Smart Chain"],
+            chainIds: "Ethereum,Binance Smart Chain",
           },
         }),
       ]);
     });
 
-    it("returns a finding if there is a agent created event", async () => {
+    it("does return a finding if there is an agent created event", async () => {
       const mockAgentUpdatedEvent = {
         args: {
           agentId: ethers.BigNumber.from(1234),
@@ -67,7 +67,7 @@ describe("forta agent updated", () => {
       const mockTransferEvent = {
         args: {
           from: ADDRESS_ZERO,
-          tokenId: ethers.BigNumber.from(123),
+          tokenId: ethers.BigNumber.from(1234),
         },
       };
       mockTxEvent.filterLog.mockReturnValue([
@@ -79,20 +79,9 @@ describe("forta agent updated", () => {
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "Forta Bot Created",
-          description: `Bot Created with AgentId: 0x7b`,
+          name: "Forta Bot Created And Updated",
+          description: `Bot Created And Updated with AgentId: 0x04d2`,
           alertId: "FORTA-BOT-CREATED",
-          severity: FindingSeverity.Low,
-          type: FindingType.Info,
-          protocol: "forta",
-          metadata: {
-            agentId: "0x7b",
-          },
-        }),
-        Finding.fromObject({
-          name: "Forta Bot Updated",
-          description: `Bot Updated with AgentId: 0x04d2`,
-          alertId: "FORTA-BOT-UPDATED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           protocol: "forta",
@@ -100,7 +89,7 @@ describe("forta agent updated", () => {
             agentId: "0x04d2",
             by: "0xdef",
             metadata: "RANDOM METADATA STRING",
-            chainIds: ["Ethereum", "Binance Smart Chain"],
+            chainIds: "Ethereum,Binance Smart Chain",
           },
         }),
       ]);
