@@ -10,6 +10,7 @@ const { provideHandleTransaction } = require("./agent");
 describe("FORTA Contracts Upgraded", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
+    mockTxEvent.transaction = { from: "0xAbC" };
     mockTxEvent.filterLog = jest.fn();
     const mockContractObject = { address: "0x123", name: "FORTA" };
     const mockGetContracts = jest.fn().mockReturnValue([mockContractObject]);
@@ -29,13 +30,14 @@ describe("FORTA Contracts Upgraded", () => {
     });
 
     it("returns a finding if there is a Upgraded event called", async () => {
-      const mockTetherTransferEvent = {
+      const mockUpgradedEvent = {
+        from: "0xAbC",
         address: "0x123",
         args: {
-          address: mockContractObject.address,
+          implementation: "0x0",
         },
       };
-      mockTxEvent.filterLog.mockReturnValue([mockTetherTransferEvent]);
+      mockTxEvent.filterLog.mockReturnValue([mockUpgradedEvent]);
 
       const findings = await handleTransaction(mockTxEvent);
 
@@ -46,9 +48,13 @@ describe("FORTA Contracts Upgraded", () => {
           alertId: "FORTA-EMIT-UPGRADED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             name: mockContractObject.name,
             address: mockContractObject.address,
+            upgradedBy: "0xabc",
+            implementation: "0x0",
+            currentChainId: 1,
           },
         }),
       ]);
