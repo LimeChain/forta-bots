@@ -10,12 +10,12 @@ Detects if a FORTA Bot has not been linked over 5 minutes after being created
 
 ## Alerts
 
-- FORTA-BOT-ASSIGNED
-  - Fired when a transaction contains Bot Link event in a predefined threshold
+- FORTA-BOT-LINK
+  - Fired when a transaction contains Bot Link event in a predefined threshold or if the bot is not linked at all
   - Severity is always set to "low"
   - Type is always set to "info"
   - Metadata fields:
-    - botAddress (address of the assigned Bot)
+    - botAddress (address of the linked Bot)
 
 ## Test Data
 

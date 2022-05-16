@@ -36,11 +36,11 @@ function provideHandleTransaction(timeHandler) {
         const addressAsHex = ethers.BigNumber.from(address).toHexString();
         findings.push(
           Finding.fromObject({
-            name: "Forta Bot Linked over threshold ",
-            description: `Forta Bot Linked: botAddress: ${addressAsHex} over the threshold: ${
+            name: "Forta Bot Link over threshold ",
+            description: `Forta Bot Link: botAddress: ${addressAsHex} over the threshold: ${
               timeThreshold / 60
             } minutes`,
-            alertId: "FORTA-BOT-LINKED",
+            alertId: "FORTA-BOT-LINK",
             severity: FindingSeverity.Low,
             type: FindingType.Info,
             metadata: {

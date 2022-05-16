@@ -62,9 +62,9 @@ describe("Bots assigned", () => {
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "Forta Bot Linked over threshold ",
-          description: `Forta Bot Linked: botAddress: 0x0abc over the threshold: 5 minutes`,
-          alertId: "FORTA-BOT-LINKED",
+          name: "Forta Bot Link over threshold ",
+          description: `Forta Bot Link: botAddress: 0x0abc over the threshold: 5 minutes`,
+          alertId: "FORTA-BOT-LINK",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {
