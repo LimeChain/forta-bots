@@ -1,28 +1,42 @@
-const {
-  getContractAndNetwork,
-  createAlert,
-} = require('./agent.config');
+const { getContractAndNetwork, createAlert } = require("./agent.config");
 
 let wasDisabled = false;
 
 let contract;
 let network;
+let contractAddress;
 function provideInitialize(getContractAndNetworkFn) {
   return async function initialize() {
-    ({ contract, network } = await getContractAndNetworkFn());
+    ({ contract, network, contractAddress } = await getContractAndNetworkFn());
+    const whitelistDisabled = await contract.whitelistDisabled();
+    wasDisabled = whitelistDisabled;
   };
 }
 
-const handleBlock = async () => {
+const whiteListDisableFunction = "function disableWhitelist()";
+
+const handleTransaction = async (txEvent) => {
   const findings = [];
 
-  const whitelistDisabled = await contract.whitelistDisabled();
+  if (!wasDisabled) {
+    const filtered = txEvent.filterFunction(
+      whiteListDisableFunction,
+      contractAddress
+    );
+    const from = txEvent.from;
 
-  // Alert only if the whitelist was NOT disabled but now it is
-  if (!wasDisabled && whitelistDisabled) {
-    findings.push(createAlert(network));
+    for (let tx of filtered) {
+      findings.push(createAlert(network, from));
+      wasDisabled = true;
+    }
   }
 
+  return findings;
+};
+
+const handleBlock = async (blockEvent) => {
+  const findings = [];
+  const whitelistDisabled = await contract.whitelistDisabled();
   wasDisabled = whitelistDisabled;
   return findings;
 };
@@ -30,8 +44,11 @@ const handleBlock = async () => {
 module.exports = {
   initialize: provideInitialize(getContractAndNetwork),
   provideInitialize,
+  handleTransaction,
   handleBlock,
   getContract: () => contract, // exported for unit tests
   getNetwork: () => network, // exported for unit tests
-  resetState: () => { (wasDisabled = false); }, // exported for unit tests
+  resetState: () => {
+    wasDisabled = false;
+  }, // exported for unit tests
 };
