@@ -52,7 +52,7 @@ describe("FORTA Contracts Upgraded", () => {
           metadata: {
             name: mockContractObject.name,
             address: mockContractObject.address,
-            mintedBy: "0xabc",
+            upgradedBy: "0xabc",
             implementation: "0x0",
             currentChainId: 1,
           },

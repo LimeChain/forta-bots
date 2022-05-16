@@ -49,7 +49,7 @@ function provideHandleTransaction(getContracts) {
           metadata: {
             name: contact.name,
             address: contact.address,
-            mintedBy: fromLowerCase,
+            upgradedBy: fromLowerCase,
             implementation,
             currentChainId,
           },
