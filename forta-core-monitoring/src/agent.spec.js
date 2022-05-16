@@ -28,69 +28,7 @@ describe("Forta core monitoring agent", () => {
       const findings = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([]);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(4);
-    });
-
-    it("returns a finding if there is a Bot Mint event", async () => {
-      const mockBotMintEvent = {
-        args: {
-          from: ADDRESS_ZERO,
-          to: "0xdef",
-          tokenId: "123",
-        },
-      };
-      mockTxEvent.filterLog
-        .mockReturnValueOnce([mockBotMintEvent])
-        .mockReturnValue([]);
-
-      const findings = await handleTransaction(mockTxEvent);
-
-      expect(findings).toStrictEqual([
-        Finding.fromObject({
-          name: "Forta new bot minted",
-          description: `New bot minted with tokenId: 123`,
-          alertId: "FORTA-NEW-BOT",
-          severity: FindingSeverity.Low,
-          type: FindingType.Info,
-          metadata: {
-            to: mockBotMintEvent.args.to,
-            tokenId: mockBotMintEvent.args.tokenId,
-          },
-        }),
-      ]);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(4);
-    });
-
-    it("returns a finding if there is a Staking Change event", async () => {
-      const mockStakingEvent = {
-        args: {
-          min: 1,
-          max: 5,
-          activated: true,
-        },
-      };
-      mockTxEvent.filterLog
-        .mockReturnValueOnce([])
-        .mockReturnValueOnce([mockStakingEvent])
-        .mockReturnValue([]);
-
-      const findings = await handleTransaction(mockTxEvent);
-
-      expect(findings).toStrictEqual([
-        Finding.fromObject({
-          name: "Forta Staking Threshold changed",
-          description: `Staking threshold changed `,
-          alertId: "FORTA-STAKING-THRESHOLD-CHANGED",
-          severity: FindingSeverity.Low,
-          type: FindingType.Info,
-          metadata: {
-            min: mockStakingEvent.args.min.toString(),
-            max: mockStakingEvent.args.max.toString(),
-            activated: mockStakingEvent.args.activated,
-          },
-        }),
-      ]);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(4);
+      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(2);
     });
 
     it("returns a finding if there is a Scanner mint event", async () => {
@@ -98,12 +36,11 @@ describe("Forta core monitoring agent", () => {
         args: {
           from: ADDRESS_ZERO,
           to: "0x123",
-          tokenId: "123",
+          tokenId: ethers.BigNumber.from("123"),
         },
       };
       mockTxEvent.filterLog
-        .mockReturnValueOnce([])
-        .mockReturnValueOnce([])
+
         .mockReturnValueOnce([mockScannerMintEvent])
         .mockReturnValue([]);
 
@@ -112,17 +49,18 @@ describe("Forta core monitoring agent", () => {
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: "Forta new scanner minted",
-          description: `New scanner minted with tokenId: 123`,
+          description: `New scanner minted with tokenId: 0x7b`,
           alertId: "FORTA-NEW-SCANNER",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
             to: mockScannerMintEvent.args.to,
-            tokenId: mockScannerMintEvent.args.tokenId,
+            tokenId: "0x7b",
           },
         }),
       ]);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(4);
+      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(2);
     });
 
     it("returns a finding if there is a Bot state update event", async () => {
@@ -135,8 +73,7 @@ describe("Forta core monitoring agent", () => {
         address: "0x123",
       };
       mockTxEvent.filterLog
-        .mockReturnValueOnce([])
-        .mockReturnValueOnce([])
+
         .mockReturnValueOnce([])
         .mockReturnValue([mockBotStateUpdateEvent]);
 
@@ -145,19 +82,20 @@ describe("Forta core monitoring agent", () => {
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: "Forta bot state updated",
-          description: `Forta bot state updated with agentId: ${mockBotStateUpdateEvent.args.agentId}`,
+          description: `Forta bot state updated with agentId: 0x7b`,
           alertId: "FORTA-BOT-STATE-CHANGED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
-            agentId: mockBotStateUpdateEvent.args.agentId,
+            agentId: "0x7b",
             contractName: "Test contract",
-            disabledBy: "ADMIN",
+            updatedBy: "ADMIN",
             currentState: "Disabled",
           },
         }),
       ]);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(4);
+      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(2);
     });
 
     it("returns a finding if there is a Scanner state update event", async () => {
@@ -170,8 +108,7 @@ describe("Forta core monitoring agent", () => {
         address: "0x123",
       };
       mockTxEvent.filterLog
-        .mockReturnValueOnce([])
-        .mockReturnValueOnce([])
+
         .mockReturnValueOnce([])
         .mockReturnValue([mockScannerStateUpdateEvent]);
 
@@ -180,19 +117,20 @@ describe("Forta core monitoring agent", () => {
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: "Forta scanner state updated",
-          description: `Forta scanner state updated with scannerId: ${mockScannerStateUpdateEvent.args.scannerId}`,
+          description: `Forta scanner state updated with scannerId: 0x7b`,
           alertId: "FORTA-SCANNER-STATE-CHANGED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
+          protocol: "forta",
           metadata: {
-            scannerId: mockScannerStateUpdateEvent.args.scannerId,
+            scannerId: "0x7b",
             contractName: "Test contract",
-            disabledBy: "ADMIN",
+            updatedBy: "ADMIN",
             currentState: "Disabled",
           },
         }),
       ]);
-      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(4);
+      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(2);
     });
   });
 });

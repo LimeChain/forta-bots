@@ -19,21 +19,24 @@ function handleScannerMintingTransfer(
 
   txFiltered.forEach((tx) => {
     const { from, to, tokenId } = tx.args;
-    const tokenIdNormalized = ethers.BigNumber.from(tokenId).toString();
-    if (tokenId && from === ADDRESS_ZERO) {
-      findings.push(
-        Finding.fromObject({
-          name: "Forta new scanner minted",
-          description: `New scanner minted with tokenId: ${tokenIdNormalized}`,
-          alertId: "FORTA-NEW-SCANNER",
-          severity: FindingSeverity.Low,
-          type: FindingType.Info,
-          metadata: {
-            to,
-            tokenId: tokenIdNormalized,
-          },
-        })
-      );
+    if (tokenId && from && to) {
+      const tokenIdNormalized = ethers.BigNumber.from(tokenId).toHexString();
+      if (tokenId && from === ADDRESS_ZERO) {
+        findings.push(
+          Finding.fromObject({
+            name: "Forta new scanner minted",
+            description: `New scanner minted with tokenId: ${tokenIdNormalized}`,
+            alertId: "FORTA-NEW-SCANNER",
+            severity: FindingSeverity.Low,
+            type: FindingType.Info,
+            protocol: "forta",
+            metadata: {
+              to,
+              tokenId: tokenIdNormalized,
+            },
+          })
+        );
+      }
     }
   });
 
