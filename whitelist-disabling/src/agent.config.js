@@ -41,7 +41,7 @@ module.exports = {
     return Finding.fromObject({
       name: "Whitelist Disabled",
       description: `Whitelist disabled on the ${network} blockchain`,
-      alertId: "WHITELIST-DISABLED",
+      alertId: "FORTA-TOKEN-WHITELIST-DISABLED",
       protocol: "forta",
       severity: FindingSeverity.Medium,
       type: FindingType.Info,

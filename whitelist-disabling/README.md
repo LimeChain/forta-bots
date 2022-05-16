@@ -11,7 +11,7 @@ Detects if the whitelist functionality of the FORT token is disabled
 
 ## Alerts
 
-- WHITELIST-DISABLED
+- FORTA-TOKEN-WHITELIST-DISABLED
   - Fired when the whitelist functionality of the FORT token is disabled
   - Severity is always set to "medium"
   - Type is always set to "info"
