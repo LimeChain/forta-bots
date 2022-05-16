@@ -21,6 +21,10 @@ class TimeHandler {
     this.agentLinked[address] = Math.floor(new Date().getTime() / 1000);
   }
 
+  getCurrentTime() {
+    return Math.floor(new Date().getTime() / 1000);
+  }
+
   checkIfPassedThreshold() {
     for (const address in this.agentLinked) {
       //If we have no track of when the agent was updated but we do have the link event, we must delete it and skip the rest of the code execution since (optimisation patch)
@@ -35,6 +39,12 @@ class TimeHandler {
         this.findings.push(address);
         delete this.agentCreated[address];
         delete this.agentLinked[address];
+      } else if (
+        !this.agentLinked[address] &&
+        this.getCurrentTime() - this.agentCreated[address] > this.threshold
+      ) {
+        this.findings.push(address);
+        delete this.agentCreated[address];
       } else if (
         this.agentLinked[address] - this.agentCreated[address] <
         this.threshold
