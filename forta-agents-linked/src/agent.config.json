@@ -1,5 +1,11 @@
 {
-  "contractAddress": "0xd46832F3f8EA8bDEFe5316696c0364F01b31a573",
-  "eventABI": "event Link(uint256 agentId, uint256 scannerId, bool enable)",
+  "contractAddress": [
+    "0x61447385B019187daa48e91c55c02AF1F1f3F863",
+    "0xd46832F3f8EA8bDEFe5316696c0364F01b31a573"
+  ],
+  "eventABI": [
+    "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
+    "event Link(uint256 agentId, uint256 scannerId, bool enable)"
+  ],
   "timeThreshold": 300
 }

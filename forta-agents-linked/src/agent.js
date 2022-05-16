@@ -18,21 +18,29 @@ function provideHandleTransaction(timeHandler) {
   return async function handleTransaction(txEvent) {
     const findings = [];
     const filtered = txEvent.filterLog(eventABI, contractAddress);
+    let aboveThreshold = [];
+
     filtered.forEach((tx) => {
-      timeHandler.addToList(tx.args.agentId);
+      const { name } = tx;
+      if (name == "Transfer") {
+        timeHandler.addToListCreated(tx.args.agentId);
+      } else if (name == "Link") {
+        timeHandler.addToListLinked(tx.args.agentId);
+      }
     });
 
-    const aboveThreshold = timeHandler.checkIfPassedThreshold();
+    aboveThreshold = timeHandler.checkIfPassedThreshold();
+
     if (aboveThreshold.length > 0) {
       aboveThreshold.forEach((address) => {
         const addressAsHex = ethers.BigNumber.from(address).toHexString();
         findings.push(
           Finding.fromObject({
-            name: "Forta Bot Assigned ",
-            description: `Forta Bot Assigned: botAddress: ${addressAsHex} in the past ${
+            name: "Forta Bot Link over threshold ",
+            description: `Forta Bot Link: botAddress: ${addressAsHex} over the threshold: ${
               timeThreshold / 60
             } minutes`,
-            alertId: "FORTA-BOT-ASSIGNED",
+            alertId: "FORTA-BOT-LINK",
             severity: FindingSeverity.Low,
             type: FindingType.Info,
             metadata: {
