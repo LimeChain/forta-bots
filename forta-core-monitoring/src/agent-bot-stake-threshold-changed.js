@@ -24,9 +24,9 @@ function handleBotStakeThresholdChanges(
     if (min && max && activated) {
       findings.push(
         Finding.fromObject({
-          name: "Forta Staking Threshold changed",
-          description: `Staking threshold changed `,
-          alertId: "FORTA-STAKING-THRESHOLD-CHANGED",
+          name: "Forta Bot Staking Threshold changed",
+          description: `Forta Bot Staking threshold changed `,
+          alertId: "FORTA-BOT-STAKING-THRESHOLD-CHANGED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           protocol: "forta",

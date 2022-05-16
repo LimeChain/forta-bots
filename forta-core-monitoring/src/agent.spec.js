@@ -48,9 +48,9 @@ describe("Forta core monitoring agent", () => {
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "Forta Staking Threshold changed",
-          description: `Staking threshold changed `,
-          alertId: "FORTA-STAKING-THRESHOLD-CHANGED",
+          name: "Forta Bot Staking Threshold changed",
+          description: `Forta Bot Staking threshold changed `,
+          alertId: "FORTA-BOT-STAKING-THRESHOLD-CHANGED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           protocol: "forta",
@@ -69,7 +69,7 @@ describe("Forta core monitoring agent", () => {
         args: {
           from: ADDRESS_ZERO,
           to: "0x123",
-          tokenId: "123",
+          tokenId: ethers.BigNumber.from("123"),
         },
       };
       mockTxEvent.filterLog
@@ -83,14 +83,14 @@ describe("Forta core monitoring agent", () => {
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: "Forta new scanner minted",
-          description: `New scanner minted with tokenId: 123`,
+          description: `New scanner minted with tokenId: 0x7b`,
           alertId: "FORTA-NEW-SCANNER",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           protocol: "forta",
           metadata: {
             to: mockScannerMintEvent.args.to,
-            tokenId: mockScannerMintEvent.args.tokenId,
+            tokenId: "0x7b",
           },
         }),
       ]);

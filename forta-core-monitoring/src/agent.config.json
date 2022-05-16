@@ -1,7 +1,7 @@
 {
   "abi": [
     "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
-    "event StakeThresholdChanged(uint256 indexed chainId, uint256 min, uint256 max, bool activated)",
+    "event StakeThresholdChanged(uint256 min, uint256 max, bool activated)",
     "event AgentEnabled(uint256 indexed agentId, bool indexed enabled, uint8 permission, bool value)",
     "event ScannerEnabled(uint256 indexed scannerId, bool indexed enabled, uint8 permission, bool value)"
   ],

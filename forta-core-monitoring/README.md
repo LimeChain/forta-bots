@@ -10,9 +10,9 @@ This bot detects multiple kinds of events for monitoring
 
 ## Alerts
 
-- FORTA-STAKING-THRESHOLD-CHANGED
+- FORTA-BOT-STAKING-THRESHOLD-CHANGED
 
-  - Fired when the staking threshold changes
+  - Fired when the Bot staking threshold changes
   - Severity is always set to "low"
   - Type is always set to "info"
   - Metadata fields:

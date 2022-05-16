@@ -20,7 +20,7 @@ function handleScannerMintingTransfer(
   txFiltered.forEach((tx) => {
     const { from, to, tokenId } = tx.args;
     if (tokenId && from && to) {
-      const tokenIdNormalized = ethers.BigNumber.from(tokenId).toString();
+      const tokenIdNormalized = ethers.BigNumber.from(tokenId).toHexString();
       if (tokenId && from === ADDRESS_ZERO) {
         findings.push(
           Finding.fromObject({
