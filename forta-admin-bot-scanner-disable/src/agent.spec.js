@@ -82,12 +82,12 @@ describe("Forta scanner/bot disabled", () => {
         Finding.fromObject({
           name: "Forta scanner disabled",
           description: `Forta scanner disabled, ScannerId: 0x01e240`,
-          alertId: "FORTA-SCANNER-DISABLED",
+          alertId: "FORTA-SCANNER-ADMIN-DISABLED",
           severity: FindingSeverity.Medium,
           type: FindingType.Info,
           protocol: "forta",
           metadata: {
-            disabledBy: { role: "ADMIN", by: "0x0" },
+            disabledBy: "0x0",
             scannerId: "0x01e240",
             contractName: "Test contract",
           },
@@ -113,12 +113,12 @@ describe("Forta scanner/bot disabled", () => {
         Finding.fromObject({
           name: "Forta Bot disabled",
           description: `Forta Bot disabled, agentId: 0x01e240`,
-          alertId: "FORTA-BOT-DISABLED",
+          alertId: "FORTA-BOT-ADMIN-DISABLED",
           severity: FindingSeverity.Medium,
           type: FindingType.Info,
           protocol: "forta",
           metadata: {
-            disabledBy: { role: "ADMIN", by: "0x0" },
+            disabledBy: "0x0",
             agentId: "0x01e240",
             contractName: "Test contract",
           },

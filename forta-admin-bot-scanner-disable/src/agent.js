@@ -51,12 +51,12 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
               Finding.fromObject({
                 name: "Forta scanner disabled",
                 description: `Forta scanner disabled, ScannerId: ${scannerIdAddress}`,
-                alertId: "FORTA-SCANNER-DISABLED",
+                alertId: "FORTA-SCANNER-ADMIN-DISABLED",
                 severity: FindingSeverity.Medium,
                 type: FindingType.Info,
                 protocol: "forta",
                 metadata: {
-                  disabledBy: { role: disabledBy, by: caller },
+                  disabledBy: caller,
                   scannerId: scannerIdAddress,
                   contractName,
                 },
@@ -72,12 +72,12 @@ function provideHandleTransaction(getContractNames, getContractAddresses) {
               Finding.fromObject({
                 name: "Forta Bot disabled",
                 description: `Forta Bot disabled, agentId: ${agentIdAddress}`,
-                alertId: "FORTA-BOT-DISABLED",
+                alertId: "FORTA-BOT-ADMIN-DISABLED",
                 severity: FindingSeverity.Medium,
                 type: FindingType.Info,
                 protocol: "forta",
                 metadata: {
-                  disabledBy: { role: disabledBy, by: caller },
+                  disabledBy: caller,
                   agentId: agentIdAddress,
                   contractName,
                 },
