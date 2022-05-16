@@ -78,5 +78,40 @@ describe("Bots assigned", () => {
       expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(2);
       expect(mockTimeHandler.reset).toHaveBeenCalledTimes(1);
     });
+
+    it("Returns a finding if there was no link event 5 minutes after Transfer event", async () => {
+      mockTimeHandler.checkIfPassedThreshold.mockReturnValue([
+        ethers.BigNumber.from("0xabc"),
+      ]);
+
+      const mockAgentEvent = {
+        name: "Transfer",
+        args: {
+          agentId: ethers.BigNumber.from("0xabc"),
+        },
+      };
+
+      mockTxEvent.filterLog.mockReturnValue([mockAgentEvent]);
+
+      const findings = await handleTransaction(mockTxEvent);
+
+      expect(findings).toStrictEqual([
+        Finding.fromObject({
+          name: "Forta Bot Link over threshold ",
+          description: `Forta Bot Link: botAddress: 0x0abc over the threshold: 5 minutes`,
+          alertId: "FORTA-BOT-LINK",
+          severity: FindingSeverity.Low,
+          type: FindingType.Info,
+          metadata: {
+            botAddress: "0x0abc",
+          },
+        }),
+      ]);
+      expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
+      expect(mockTimeHandler.addToListCreated).toHaveBeenCalledTimes(2);
+      expect(mockTimeHandler.addToListLinked).toHaveBeenCalledTimes(1);
+      expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(3);
+      expect(mockTimeHandler.reset).toHaveBeenCalledTimes(2);
+    });
   });
 });

@@ -40,12 +40,6 @@ class TimeHandler {
         delete this.agentCreated[address];
         delete this.agentLinked[address];
       } else if (
-        !this.agentLinked[address] &&
-        this.getCurrentTime() - this.agentCreated[address] > this.threshold
-      ) {
-        this.findings.push(address);
-        delete this.agentCreated[address];
-      } else if (
         this.agentLinked[address] - this.agentCreated[address] <
         this.threshold
       ) {
@@ -53,6 +47,17 @@ class TimeHandler {
         delete this.agentLinked[address];
       }
     }
+
+    for (const address in this.agentCreated) {
+      if (
+        !this.agentLinked[address] &&
+        this.getCurrentTime() - this.agentCreated[address] > this.threshold
+      ) {
+        this.findings.push(address);
+        delete this.agentCreated[address];
+      }
+    }
+
     return this.findings;
   }
 
