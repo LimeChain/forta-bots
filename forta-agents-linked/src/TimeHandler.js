@@ -8,13 +8,13 @@ Logic:
 class TimeHandler {
   constructor(threshold) {
     this.threshold = threshold;
-    this.agentUpdated = {};
+    this.agentCreated = {};
     this.agentLinked = {};
     this.findings = [];
   }
 
   addToListUpdated(address) {
-    this.agentUpdated[address] = Math.floor(new Date().getTime() / 1000);
+    this.agentCreated[address] = Math.floor(new Date().getTime() / 1000);
   }
 
   addToListLinked(address) {
@@ -24,22 +24,22 @@ class TimeHandler {
   checkIfPassedThreshold() {
     for (const address in this.agentLinked) {
       //If we have no track of when the agent was updated but we do have the link event, we must delete it and skip the rest of the code execution since (optimisation patch)
-      if (!this.agentUpdated[address]) {
+      if (!this.agentCreated[address]) {
         delete this.agentLinked[address];
         continue;
       }
       if (
-        this.agentLinked[address] - this.agentUpdated[address] >
+        this.agentLinked[address] - this.agentCreated[address] >
         this.threshold
       ) {
         this.findings.push(address);
-        delete this.agentUpdated[address];
+        delete this.agentCreated[address];
         delete this.agentLinked[address];
       } else if (
-        this.agentLinked[address] - this.agentUpdated[address] <
+        this.agentLinked[address] - this.agentCreated[address] <
         this.threshold
       ) {
-        delete this.agentUpdated[address];
+        delete this.agentCreated[address];
         delete this.agentLinked[address];
       }
     }

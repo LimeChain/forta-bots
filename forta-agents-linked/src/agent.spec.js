@@ -24,24 +24,24 @@ describe("Bots assigned", () => {
 
     it("returns empty findings if there are no bots linked over 5 minutes", async () => {
       mockTxEvent.filterLog.mockReturnValue([]);
-
+      mockTimeHandler.checkIfPassedThreshold.mockReturnValueOnce([]);
       const findings = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([]);
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
-      expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(0);
+      expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(1);
       expect(mockTimeHandler.addToListUpdated).toHaveBeenCalledTimes(0);
       expect(mockTimeHandler.addToListLinked).toHaveBeenCalledTimes(0);
       expect(mockTimeHandler.reset).toHaveBeenCalledTimes(0);
     });
 
-    it("returns a finding if there was a bot link event 5 minutes after AgentUpdated event", async () => {
+    it("returns a finding if there was a bot link event 5 minutes after Transfer event", async () => {
       mockTimeHandler.checkIfPassedThreshold.mockReturnValue([
         ethers.BigNumber.from("0xabc"),
       ]);
 
       const mockAgentEvent = {
-        name: "AgentUpdated",
+        name: "Transfer",
         args: {
           agentId: ethers.BigNumber.from("0xabc"),
         },
@@ -62,9 +62,9 @@ describe("Bots assigned", () => {
 
       expect(findings).toStrictEqual([
         Finding.fromObject({
-          name: "Forta Bot Assigned ",
-          description: `Forta Bot Assigned: botAddress: 0x0abc in the past 5 minutes`,
-          alertId: "FORTA-BOT-ASSIGNED",
+          name: "Forta Bot Linked over threshold ",
+          description: `Forta Bot Linked: botAddress: 0x0abc over the threshold: 5 minutes`,
+          alertId: "FORTA-BOT-LINKED",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {
@@ -75,7 +75,7 @@ describe("Bots assigned", () => {
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
       expect(mockTimeHandler.addToListUpdated).toHaveBeenCalledTimes(1);
       expect(mockTimeHandler.addToListLinked).toHaveBeenCalledTimes(1);
-      expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(1);
+      expect(mockTimeHandler.checkIfPassedThreshold).toHaveBeenCalledTimes(2);
       expect(mockTimeHandler.reset).toHaveBeenCalledTimes(1);
     });
   });
