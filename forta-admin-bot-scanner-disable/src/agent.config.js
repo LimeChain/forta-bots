@@ -5,7 +5,7 @@ const data = {
   ],
   contracts: {
     "0xbF2920129f83d75DeC95D97A879942cCe3DcD387": "Scanner Registry",
-    "0x61447385B019187daa48e91c55c02AF1F1f3F863": "Agents Registry",
+    "0x61447385B019187daa48e91c55c02AF1F1f3F863": "Agent Registry",
   },
 };
 

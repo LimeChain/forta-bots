@@ -1,7 +1,7 @@
 {
   "name": "forta-scanner-disabled",
   "version": "0.0.1",
-  "description": "This agent detects when a Forta scanner or bot has been disabled",
+  "description": "This bot detects when a Forta scanner or bot has been disabled",
   "chainIds": [
     137
   ],
