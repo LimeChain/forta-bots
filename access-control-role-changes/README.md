@@ -11,6 +11,7 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
 ## Alerts
 
 - FORTA-ACCESS-CONTROL-ROLE-GRANTED
+
   - Fired when a 'RoleGranted' event is emitted
   - Severity is always set to "medium"
   - Type is always set to "info"
@@ -20,6 +21,7 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
     - sender - the account that originated the contract call
 
 - FORTA-ACCESS-CONTROL-ROLE-REVOKED
+
   - Fired when a 'RoleRevoked' event is emitted
   - Severity is always set to "medium"
   - Type is always set to "info"
@@ -39,7 +41,7 @@ Detects if a 'RoleGranted', 'RoleRevoked' or 'RoleAdminChanged' event is emitted
 
 ## Test Data
 
-The agent behaviour can be verified with the following transactions:
+The bot behaviour can be verified with the following transactions:
 
 - 0x5238cf3ebb3c79b5a5c32c0cac30f67604e9fbacc7b3c1db6342c8560d7df796 (Granted DEFAULT_ADMIN_ROLE)
 - 0x98b78412631f8a5b1e0eca251c64f001f4e055c8eb05e72504c2e06738903b78 (Granted ADMIN_ROLE)
