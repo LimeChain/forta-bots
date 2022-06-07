@@ -1,6 +1,6 @@
 {
   "name": "forta-whitelist-disabled-bot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Detects if the whitelist functionality of the FORT token is disabled",
   "chainIds": [
     1,
