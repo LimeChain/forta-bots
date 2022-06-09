@@ -21,7 +21,7 @@ module.exports = {
           ABI,
           getEthersProvider()
         );
-        return { contract, network: "Ethereum", ETHEREUM_CONTRACT_ADDRESS };
+        return { contract, network: "Ethereum", contractAddress: ETHEREUM_CONTRACT_ADDRESS };
       }
       case 137: {
         const contract = new ethers.Contract(
@@ -29,7 +29,7 @@ module.exports = {
           ABI,
           getEthersProvider()
         );
-        return { contract, network: "Polygon", POLYGON_CONTRACT_ADDRESS };
+        return { contract, network: "Polygon", contractAddress: POLYGON_CONTRACT_ADDRESS };
       }
       default:
         throw new Error(
