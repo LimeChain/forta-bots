@@ -7,6 +7,8 @@ const config = {
   chainIds: [1, 137, 56, 43114, 42161, 10, 250],
   overCapacityThreshold: 90,
   underCapacityThreshold: 20,
+  subgraphURL:
+    "https://api.thegraph.com/subgraphs/name/tdrachev/forta-subgraph",
 };
 
 module.exports = {

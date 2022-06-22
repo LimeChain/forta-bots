@@ -12,8 +12,8 @@ describe("Scanners capacity by chainId", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
     const mockScannersLoaded = [
-      { scannerId: "1234", chainId: 1 },
-      { scannerId: "1234", chainId: 1 },
+      { id: "1234", chainId: 1 },
+      { id: "1234", chainId: 1 },
     ];
     const mockScannerCountByChainId = { 1: 1 };
     const mockEthCallProvider = {
