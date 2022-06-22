@@ -169,6 +169,7 @@ function provideHandleBlock(
 
         for (let [i, s] of scannersLoaded.entries()) {
           if (s.chainId != id) continue;
+
           const scannerCapacity = scannersCapacities[i].toNumber();
           const scannerCapacityPercentage = (scannerCapacity / 25) * 100;
           scannerCapacityForChainId += scannerCapacityPercentage;
@@ -176,7 +177,6 @@ function provideHandleBlock(
 
         const scannerCapacityForChainIdNormalized =
           scannerCapacityForChainId / scannersCountByChainId[id];
-
         if (isNaN(scannerCapacityForChainIdNormalized)) continue;
 
         if (
@@ -238,4 +238,12 @@ module.exports = {
   ),
   provideHandleTransaction,
   provideHandleBlock,
+  setScannerIds: (ids) => {
+    for (let id of ids) {
+      scannerIds.push(id);
+    }
+  },
+  resetShouldCheckCapacity: () => {
+    shouldCheckCapacity = true;
+  },
 };
