@@ -18,10 +18,6 @@ const mintAbi =
 const provider = getEthersProvider();
 const contractAddresses = Object.keys(config.contracts);
 const ethcallProvider = new Provider(provider);
-const agentRegistryContract = new Contract(
-  contractAddresses[1],
-  agentRegistryAbi
-);
 const dispatcherContract = new Contract(contractAddresses[0], dispatcherAbi);
 const scannerRegistryContract = new Contract(contractAddresses[2], scannerAbi);
 const scannersCountByChainId = {};
@@ -111,6 +107,7 @@ async function initialize() {
   for (let scanner of scanners) {
     scannersLoadedWithChainId.push(scanner);
   }
+  console.log(scannersLoadedWithChainId);
 }
 
 //Here we check if a new scanner is minted so we can add it to the array of scanners
@@ -135,7 +132,7 @@ function provideHandleTransaction(
         const scannerChainIdNormalized = scannerChainId.toNumber();
         scannersCountByChainId[scannerChainIdNormalized]++;
         const tokenIdString = tokenId.toString();
-        scannerIds.push(ethers.BigNumber.from(tokenIdString).toString());
+        scannerIds.push(tokenIdString);
         scannersLoaded.push({
           id: tokenIdString,
           chainId: scannerChainIdNormalized,
