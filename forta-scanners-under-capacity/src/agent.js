@@ -107,7 +107,6 @@ async function initialize() {
   for (let scanner of scanners) {
     scannersLoadedWithChainId.push(scanner);
   }
-  console.log(scannersLoadedWithChainId);
 }
 
 //Here we check if a new scanner is minted so we can add it to the array of scanners
