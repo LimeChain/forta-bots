@@ -111,7 +111,7 @@ function provideHandleBlock(scannersLoaded) {
 
 async function runJob(scannersLoaded) {
   isChecking = true;
-  console.log("CHECKING");
+  lastCheck = Date.now();
   for (let s of scannersLoaded) {
     const scannerAddress = s.id;
 
@@ -142,7 +142,6 @@ async function runJob(scannersLoaded) {
     }
   }
   isChecking = false;
-  lastCheck = Date.now();
 }
 
 module.exports = {

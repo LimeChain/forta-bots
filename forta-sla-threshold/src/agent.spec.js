@@ -13,7 +13,7 @@ describe("SLA Threshold agent", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
-    const mockScannersLoaded = [ethers.BigNumber.from("1234")];
+    const mockScannersLoaded = [{ id: ethers.BigNumber.from("1234") }];
     const handleTransaction = provideHandleTransaction(mockScannersLoaded);
     axios.default.get
       .mockResolvedValueOnce({
@@ -43,7 +43,7 @@ describe("SLA Threshold agent", () => {
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: "Scanner SLA under threshold",
-          description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${mockScannersLoaded[0]}`,
+          description: `Scanner SLA is under the threshold and might get disqualifed, scannerId: ${mockScannersLoaded[0].id}`,
           alertId: "FORTA-SCANNER-SLA-UNDER-THRESHOLD",
           severity: FindingSeverity.High,
           type: FindingType.Info,
