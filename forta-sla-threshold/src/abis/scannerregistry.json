@@ -6,8 +6,6 @@
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
-  { "inputs": [], "name": "CommitAlreadyExists", "type": "error" },
-  { "inputs": [], "name": "CommitNotReady", "type": "error" },
   {
     "inputs": [
       { "internalType": "address", "name": "sender", "type": "address" },
@@ -18,23 +16,33 @@
     "type": "error"
   },
   {
-    "inputs": [{ "internalType": "string", "name": "name", "type": "string" }],
-    "name": "EmptyArray",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "hash", "type": "bytes32" }
-    ],
-    "name": "MetadataNotUnique",
-    "type": "error"
-  },
-  {
     "inputs": [
       { "internalType": "bytes32", "name": "role", "type": "bytes32" },
       { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "MissingRole",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "chainId", "type": "uint256" }
+    ],
+    "name": "PublicRegistrationDisabled",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "scanner", "type": "address" }
+    ],
+    "name": "ScannerNotRegistered",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "sender", "type": "address" },
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" }
+    ],
+    "name": "SenderNotManager",
     "type": "error"
   },
   {
@@ -51,11 +59,6 @@
       { "internalType": "uint256", "name": "subject", "type": "uint256" }
     ],
     "name": "StakedUnderMinimum",
-    "type": "error"
-  },
-  {
-    "inputs": [{ "internalType": "string", "name": "name", "type": "string" }],
-    "name": "UnorderedArray",
     "type": "error"
   },
   {
@@ -98,81 +101,6 @@
       }
     ],
     "name": "AdminChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "commit",
-        "type": "bytes32"
-      }
-    ],
-    "name": "AgentCommitted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "agentId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "bool",
-        "name": "enabled",
-        "type": "bool"
-      },
-      {
-        "indexed": false,
-        "internalType": "enum AgentRegistryEnable.Permission",
-        "name": "permission",
-        "type": "uint8"
-      },
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "value",
-        "type": "bool"
-      }
-    ],
-    "name": "AgentEnabled",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "agentId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "by",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "metadata",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256[]",
-        "name": "chainIds",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "AgentUpdated",
     "type": "event"
   },
   {
@@ -242,13 +170,25 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
-        "name": "delay",
+        "name": "scannerId",
         "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "manager",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "enabled",
+        "type": "bool"
       }
     ],
-    "name": "FrontRunningDelaySet",
+    "name": "ManagerEnabled",
     "type": "event"
   },
   {
@@ -269,6 +209,62 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "uint256",
+        "name": "scannerId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "bool",
+        "name": "enabled",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ScannerRegistryEnable.Permission",
+        "name": "permission",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "value",
+        "type": "bool"
+      }
+    ],
+    "name": "ScannerEnabled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "scannerId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metadata",
+        "type": "string"
+      }
+    ],
+    "name": "ScannerUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "newstakeController",
         "type": "address"
@@ -280,6 +276,12 @@
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      },
       {
         "indexed": false,
         "internalType": "uint256",
@@ -342,6 +344,29 @@
   },
   {
     "inputs": [
+      { "internalType": "address", "name": "scanner", "type": "address" },
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+      { "internalType": "string", "name": "metadata", "type": "string" }
+    ],
+    "name": "adminRegister",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "scanner", "type": "address" },
+      { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+      { "internalType": "string", "name": "metadata", "type": "string" }
+    ],
+    "name": "adminUpdate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "to", "type": "address" },
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
@@ -361,115 +386,30 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" },
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "string", "name": "metadata", "type": "string" },
-      { "internalType": "uint256[]", "name": "chainIds", "type": "uint256[]" }
-    ],
-    "name": "createAgent",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" },
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" },
       {
-        "internalType": "enum AgentRegistryEnable.Permission",
+        "internalType": "enum ScannerRegistryEnable.Permission",
         "name": "permission",
         "type": "uint8"
       }
     ],
-    "name": "disableAgent",
+    "name": "disableScanner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" },
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" },
       {
-        "internalType": "enum AgentRegistryEnable.Permission",
+        "internalType": "enum ScannerRegistryEnable.Permission",
         "name": "permission",
         "type": "uint8"
       }
     ],
-    "name": "enableAgent",
+    "name": "enableScanner",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "frontRunningDelay",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" }
-    ],
-    "name": "getAgent",
-    "outputs": [
-      { "internalType": "bool", "name": "created", "type": "bool" },
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "uint256", "name": "agentVersion", "type": "uint256" },
-      { "internalType": "string", "name": "metadata", "type": "string" },
-      { "internalType": "uint256[]", "name": "chainIds", "type": "uint256[]" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "chainId", "type": "uint256" },
-      { "internalType": "uint256", "name": "index", "type": "uint256" }
-    ],
-    "name": "getAgentByChainAndIndex",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "index", "type": "uint256" }
-    ],
-    "name": "getAgentByIndex",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getAgentCount",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "chainId", "type": "uint256" }
-    ],
-    "name": "getAgentCountByChain",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" }
-    ],
-    "name": "getAgentState",
-    "outputs": [
-      { "internalType": "bool", "name": "created", "type": "bool" },
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "uint256", "name": "agentVersion", "type": "uint256" },
-      { "internalType": "string", "name": "metadata", "type": "string" },
-      { "internalType": "uint256[]", "name": "chainIds", "type": "uint256[]" },
-      { "internalType": "bool", "name": "enabled", "type": "bool" }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -483,10 +423,58 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "commit", "type": "bytes32" }
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" },
+      { "internalType": "uint256", "name": "index", "type": "uint256" }
     ],
-    "name": "getCommitTimestamp",
+    "name": "getManagerAt",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" }
+    ],
+    "name": "getManagerCount",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" }
+    ],
+    "name": "getScanner",
+    "outputs": [
+      { "internalType": "bool", "name": "registered", "type": "bool" },
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+      { "internalType": "string", "name": "metadata", "type": "string" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" }
+    ],
+    "name": "getScannerChainId",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" }
+    ],
+    "name": "getScannerState",
+    "outputs": [
+      { "internalType": "bool", "name": "registered", "type": "bool" },
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+      { "internalType": "string", "name": "metadata", "type": "string" },
+      { "internalType": "bool", "name": "enabled", "type": "bool" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -504,7 +492,9 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      { "internalType": "uint256", "name": "subject", "type": "uint256" }
+    ],
     "name": "getStakeThreshold",
     "outputs": [
       {
@@ -545,18 +535,28 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" }
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" }
     ],
-    "name": "isCreated",
+    "name": "isEnabled",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" }
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" },
+      { "internalType": "address", "name": "manager", "type": "address" }
     ],
-    "name": "isEnabled",
+    "name": "isManager",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" }
+    ],
+    "name": "isRegistered",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
@@ -608,9 +608,11 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "commit", "type": "bytes32" }
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint256", "name": "chainId", "type": "uint256" },
+      { "internalType": "string", "name": "metadata", "type": "string" }
     ],
-    "name": "prepareAgent",
+    "name": "register",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -640,6 +642,15 @@
   },
   {
     "inputs": [
+      { "internalType": "address", "name": "scanner", "type": "address" }
+    ],
+    "name": "scannerAddressToId",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "newManager", "type": "address" }
     ],
     "name": "setAccessManager",
@@ -659,9 +670,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "delay", "type": "uint256" }
+      { "internalType": "uint256", "name": "scannerId", "type": "uint256" },
+      { "internalType": "address", "name": "manager", "type": "address" },
+      { "internalType": "bool", "name": "enable", "type": "bool" }
     ],
-    "name": "setFrontRunningDelay",
+    "name": "setManager",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -709,7 +722,8 @@
         "internalType": "struct IStakeSubject.StakeThreshold",
         "name": "newStakeThreshold",
         "type": "tuple"
-      }
+      },
+      { "internalType": "uint256", "name": "chainId", "type": "uint256" }
     ],
     "name": "setStakeThreshold",
     "outputs": [],
@@ -748,17 +762,6 @@
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "transferFrom",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "agentId", "type": "uint256" },
-      { "internalType": "string", "name": "metadata", "type": "string" },
-      { "internalType": "uint256[]", "name": "chainIds", "type": "uint256[]" }
-    ],
-    "name": "updateAgent",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
