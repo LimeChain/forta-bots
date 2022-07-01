@@ -5,17 +5,25 @@ const {
   createTransactionEvent,
   ethers,
 } = require("forta-agent");
-const { provideHandleBlock, provideHandleTransaction } = require("./agent");
+const {
+  provideHandleBlock,
+  provideHandleTransaction,
+  setScannerIds,
+  resetShouldCheckCapacity,
+} = require("./agent");
+const { config } = require("./agent.config");
 const ADDRESS_ZERO = ethers.constants.AddressZero;
 describe("Scanners capacity by chainId", () => {
   describe("handleTransaction", () => {
     const mockTxEvent = createTransactionEvent({});
     mockTxEvent.filterLog = jest.fn();
     const mockScannersLoaded = [
-      { scannerId: "1234", chainId: 1 },
-      { scannerId: "1234", chainId: 1 },
+      { id: "1234", chainId: 1 },
+      { id: "1234", chainId: 1 },
     ];
     const mockScannerCountByChainId = { 1: 1 };
+    config.chainIds = [1];
+    setScannerIds(["1234"]);
     const mockEthCallProvider = {
       all: jest
         .fn()
@@ -25,29 +33,30 @@ describe("Scanners capacity by chainId", () => {
           ethers.BigNumber.from(1),
           ethers.BigNumber.from(1),
         ])
-
         .mockReturnValue([
           ethers.BigNumber.from(50),
           ethers.BigNumber.from(50),
           ethers.BigNumber.from(50),
         ]),
     };
-    const handleTransaction = provideHandleTransaction(
-      mockScannersLoaded,
-      mockScannerCountByChainId,
-      mockEthCallProvider
-    );
-    const handleBlock = provideHandleBlock(
-      mockScannersLoaded,
-      mockScannerCountByChainId,
-      mockEthCallProvider
-    );
-
+    let handleTransaction;
+    let handleBlock;
     beforeEach(() => {
       mockTxEvent.filterLog.mockReset();
+      handleTransaction = provideHandleTransaction(
+        mockScannersLoaded,
+        mockScannerCountByChainId,
+        mockEthCallProvider
+      );
+      handleBlock = provideHandleBlock(
+        mockScannersLoaded,
+        mockScannerCountByChainId,
+        mockEthCallProvider
+      );
+      resetShouldCheckCapacity();
     });
 
-    it("returns empty findings if there are no new scanners minted", async () => {
+    it.only("returns empty findings if there are no new scanners minted", async () => {
       mockTxEvent.filterLog.mockReturnValue([]);
 
       const findings = await handleTransaction(mockTxEvent);
@@ -56,7 +65,7 @@ describe("Scanners capacity by chainId", () => {
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
     });
 
-    it("returns empty findings if there are  new scanners minted", async () => {
+    it.only("returns empty findings if there are  new scanners minted", async () => {
       const mockMintedTx = {
         args: { from: ADDRESS_ZERO, tokenId: ethers.BigNumber.from("123") },
       };
@@ -68,7 +77,7 @@ describe("Scanners capacity by chainId", () => {
       expect(mockTxEvent.filterLog).toHaveBeenCalledTimes(1);
     });
 
-    it("returns a finding if Scanners from a chainId are under capacity", async () => {
+    it.only("returns a finding if Scanners from a chainId are under capacity", async () => {
       const findings = await handleBlock();
 
       expect(findings).toStrictEqual([
@@ -87,7 +96,7 @@ describe("Scanners capacity by chainId", () => {
       ]);
       expect(mockEthCallProvider.all).toHaveBeenCalledTimes(2);
     });
-    it("returns a finding if Scanners from a chainId are over capacity", async () => {
+    it.only("returns a finding if Scanners from a chainId are over capacity", async () => {
       const findings = await handleBlock();
 
       expect(findings).toStrictEqual([
